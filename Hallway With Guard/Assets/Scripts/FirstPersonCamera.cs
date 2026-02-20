@@ -11,7 +11,7 @@ public class FirstPersonCamera : MonoBehaviour
 
     [Header("Settings")]
     public float mouseSensitivity = 100f;
-    public float controllerSensitivity = 2f;
+    public float controllerSensitivity = 250f;
 
     float xRot;
     float yRot;
