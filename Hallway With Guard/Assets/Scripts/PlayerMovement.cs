@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,9 +12,9 @@ public class PlayerMovement : MonoBehaviour
     public InputActionReference jumpAction;   // Player/Jump (Button)
 
     [Header("Movement")]
-    public float moveSpeed = 6f;
-    public float jumpHeight = 1.5f;
-    public float gravity = -9.81f;
+    public float moveSpeed = 10f;
+    public float jumpHeight = 2f;
+    public float gravity = -45f;              // -45f should work for satisfying gravity imo
     public float groundedStick = -2f;         // small downward force when grounded
 
     CharacterController controller;
@@ -47,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // grounded check (CharacterController provides this)
+        // grounded check
         bool isGrounded = controller.isGrounded;
 
         if (isGrounded && velocity.y < 0)
@@ -60,6 +62,9 @@ public class PlayerMovement : MonoBehaviour
         Vector2 input = moveAction.action.ReadValue<Vector2>();
 
         // build movement using orientation (yaw-only ideally)
+        // note: orientation might be the cause of the occasional camera-seizures...
+        /* note part 2: it might've actually been CharController + Rigidbody conflicting 
+        with eachother so I removed Rigidbody on Player parent object for now */
         Vector3 forward = orientation.forward;
         Vector3 right = orientation.right;
 
