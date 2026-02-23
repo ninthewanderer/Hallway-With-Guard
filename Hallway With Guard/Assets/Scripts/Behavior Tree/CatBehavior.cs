@@ -4,16 +4,17 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /*
- 2/22/2026 PROGRESS:
+ 2/23/2026 PROGRESS:
  - Basic ability to navigate to specified positions using NavMesh.
  - Confirmed basic btree functionality. 
- - Made a few basic methods that we will need for later.
+ - Patrol() is complete.
+ - Hunt() has been tested and runs at base.
+ - Hunt() interrupts Patrol() successfully.
  
- - Patrol(), Rest(), and Hunt() are not done.
- - Hunt() needs to be tested to see if it runs at base.
- - Test functionality of the patrolPoints GameObject array.
+ - Rest() and Hunt() are not done.
+ - Ensure Hunt() interrupts Rest().
  - Create POV colliders for cat & test collision functionality.
- - Ensure btree repeatedly loops rather than ending after one iteration.
+ - Ensure btree repeatedly loops rather than ending after one iteration (current setup is for debugging).
  */
 
 public class CatBehavior : MonoBehaviour
@@ -39,11 +40,12 @@ public class CatBehavior : MonoBehaviour
     public GameObject player;
     private float playerSpeed;
     private CharacterController playerController;
-    private bool playerSpotted =  false;
+    public bool playerSpotted =  false; // FIXME: make sure this gets changed back to private.
     
-    // GameObjects needed for navigation.
+    // Variables needed for navigation.
     public GameObject bed;
     public GameObject[] patrolPoints;
+    private bool finishedPatrol = false;
 
     void Start()
     {
@@ -58,16 +60,16 @@ public class CatBehavior : MonoBehaviour
         tree = new BehaviorTree();
         
         // Creates default 3 behaviors of the tree.
-        Selector patrolRestHunt = new Selector("Patrol, Rest, or Hunt");
+        Selector huntPatrolRest = new Selector("Hunt, Patrol, or Rest");
+        Leaf hunt = new Leaf("Hunt", Hunt);
         Leaf patrol = new Leaf("Patrol", Patrol);
         Leaf rest = new Leaf("Rest", Rest);
-        Leaf hunt = new Leaf("Hunt", Hunt);
         
-        patrolRestHunt.AddChild(patrol);
-        patrolRestHunt.AddChild(rest);
-        patrolRestHunt.AddChild(hunt);
+        huntPatrolRest.AddChild(hunt);
+        huntPatrolRest.AddChild(patrol);
+        huntPatrolRest.AddChild(rest);
         
-        tree.AddChild(patrolRestHunt);
+        tree.AddChild(huntPatrolRest);
     }
 
     void Update()
@@ -75,7 +77,6 @@ public class CatBehavior : MonoBehaviour
         // Calls Process() to start processing/running the nodes within the tree.
         if (treeStatus != Node.Status.SUCCESS)
         {
-            Debug.Log("Processing tree.");
             treeStatus = tree.Process();
         }
     }
@@ -85,53 +86,110 @@ public class CatBehavior : MonoBehaviour
         return lastAction.ToString();
     }
 
-    // FIXME: needs to incorporate patrol functionality and return SUCCESS
+    // FIXME: still needs win conditions, collider detections, and a way to turn playerSpotted off.
+    private Node.Status Hunt()
+    {
+        if (!playerSpotted)
+        {
+            return Node.Status.FAILURE;
+        }
+        
+        // Since the player has been spotted, the cat's state must be HUNTING no matter what and all coroutines stop.
+        StopAllCoroutines();
+        state = ActionState.HUNTING;
+
+        // Calculates the direction the player is heading towards.
+        Vector3 playerDirection = player.transform.position - transform.position;
+        float relativeDestination =
+            Vector3.Angle(transform.forward, transform.TransformVector(player.transform.forward));
+        float angleToTarget = Vector3.Angle(transform.forward, transform.TransformVector(playerDirection));
+
+        // If the player isn't moving, the cat will "pounce".
+        if ((angleToTarget > 90 && relativeDestination < 20) || playerController.velocity.magnitude < 0.1f)
+        {
+            agent.SetDestination(player.transform.position);
+        }
+        
+        // If the player is moving, calculates and goes to where they're heading based on their speed.
+        float lookAhead = playerDirection.magnitude/(playerSpeed) + playerController.velocity.magnitude;
+        agent.SetDestination(player.transform.position + player.transform.forward * lookAhead);
+        // Do something here to check if player is caught by the cat
+
+        if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
+        {
+            Debug.Log("The player has been caught!");
+            return Node.Status.SUCCESS;
+        }
+        
+        return Node.Status.RUNNING;
+    }
+    
+    private IEnumerator Patrolling()
+    {
+        // Begins iterating through the patrolPoints array.
+        foreach (GameObject waypoint in patrolPoints)
+        {
+            // Sets cat's path to the waypoint.
+            agent.SetDestination(waypoint.transform.position);
+            bool arrivedAtPatrol = false;
+            
+            // While the cat hasn't arrived at the patrol and is on their way to it, this will execute.
+            while (!arrivedAtPatrol && agent.pathStatus != NavMeshPathStatus.PathComplete)
+            {
+                // Calculates the distance between the current patrol and the cat.
+                float distToPatrol = Vector3.Distance(waypoint.transform.position, transform.position);
+                
+                // If the cat reaches the patrol point, arrivedAtPatrol will be set to true.
+                if (distToPatrol <= agent.stoppingDistance)
+                { 
+                    arrivedAtPatrol = true;
+                }
+            }
+            
+            // After the cat arrives at the patrol point, it will wait 5 seconds before continuing or ending its patrol.
+            yield return new WaitForSeconds(5f); 
+        }
+
+        // After the cat iterates through all of its patrol points, this lets Patrol() know that the patrol was successful.
+        finishedPatrol = true;
+    }
+    
     private Node.Status Patrol()
     {
         // If the last action the cat performed was patrolling or eating, fail to execute node.
         String lastActionString = GetLastAction();
         if (lastActionString.Equals("PATROL") || lastActionString.Equals("EAT"))
         {
-            Debug.Log("Patrol failed.");
             return Node.Status.FAILURE;
         }
         
         // If the player was recently spotted, fail to execute node.
         if (playerSpotted)
         {
-            Debug.Log("Patrol failed.");
             return Node.Status.FAILURE;
         }
-        
-        // FIXME: temp code to test tree functionality.
-        // Calculates the distance between the point and the cat.
-        float distanceToPoint = Vector3.Distance(patrolPoints[0].transform.position, transform.position);
-        
-        // If the cat is idle, they will go to the point.
+
+        // This will execute the first run-through of this node if it gets this far. 
         if (state == ActionState.IDLE)
         {
-            agent.SetDestination(patrolPoints[0].transform.position);
             state = ActionState.WORKING;
+            StartCoroutine(Patrolling());
         }
-        else if (Vector3.Distance(agent.pathEndPosition, patrolPoints[0].transform.position) >= agent.stoppingDistance)
-        { // If the cat doesn't make it to the bed, the node fails.
-            state = ActionState.IDLE;
-            Debug.Log("Patrol failed.");
-            return Node.Status.FAILURE;
-        }
-        else if (distanceToPoint <= agent.stoppingDistance)
-        { // If the cat reaches the point, the node succeeds.
+
+        // When the Patrolling() coroutine sets finishedPatrol to true, this runs.
+        if (finishedPatrol)
+        {
+            StopAllCoroutines();
             state = ActionState.IDLE;
             lastAction = LastAction.PATROL;
-            Debug.Log("Patrol was successful!");
             return Node.Status.SUCCESS;
         }
         
-        //Debug.Log("Patrol is running...");
+        // At default, set to running for every loop through the tree that the cat is working.
         return Node.Status.RUNNING;
     }
 
-    // FIXME: needs to make cat wait after arriving at bed
+    // FIXME: needs to make cat wait after arriving at bed.
     private Node.Status Rest()
     {
         // If the last action the cat performed was resting or hunting, fail to execute node.
@@ -156,7 +214,7 @@ public class CatBehavior : MonoBehaviour
             agent.SetDestination(bed.transform.position);
             state = ActionState.WORKING;
         }
-        else if (Vector3.Distance(agent.pathEndPosition, bed.transform.position) >= agent.stoppingDistance)
+        else if (Vector3.Distance(agent.pathEndPosition, bed.transform.position) > agent.stoppingDistance)
         { // If the cat doesn't make it to the bed, the node fails.
             state = ActionState.IDLE;
             return Node.Status.FAILURE;
@@ -170,42 +228,6 @@ public class CatBehavior : MonoBehaviour
         }
         
         Debug.Log("Rest is running...");
-        return Node.Status.RUNNING;
-    }
-
-    private Node.Status Hunt()
-    {
-        if (!playerSpotted)
-        {
-            return Node.Status.FAILURE;
-        }
-        
-        // Since the player has been spotted, the coroutine needs to stop & the cat's state must change.
-        if (state != ActionState.HUNTING) // Ensures this only happens once.
-        {
-            state = ActionState.HUNTING;
-        }
-
-        // Calculates the direction the player is heading towards.
-        Vector3 playerDirection = player.transform.position - transform.position;
-        float relativeDestination =
-            Vector3.Angle(transform.forward, transform.TransformVector(player.transform.forward));
-        float angleToTarget = Vector3.Angle(transform.forward, transform.TransformVector(playerDirection));
-
-        // If the player isn't moving, the cat will "pounce".
-        if ((angleToTarget > 90 && relativeDestination < 20) || playerController.velocity.magnitude < 0.1f)
-        {
-            agent.SetDestination(player.transform.position);
-            
-            // FIXME: actually Do something here to check if player is caught by the cat. maybe specific collider?
-            Debug.Log("The player has been caught!");
-        }
-        
-        // If the player is moving, calculates and goes to where they're heading based on their speed.
-        float lookAhead = playerDirection.magnitude/(playerSpeed) + playerController.velocity.magnitude;
-        agent.SetDestination(player.transform.position + player.transform.forward * lookAhead);
-        // Do something here to check if player is caught by the cat
-        
         return Node.Status.RUNNING;
     }
 

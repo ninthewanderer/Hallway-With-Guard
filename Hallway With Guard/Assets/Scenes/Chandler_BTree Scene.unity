@@ -863,7 +863,6 @@ MonoBehaviour:
   bed: {fileID: 1949955204}
   patrolPoints:
   - {fileID: 1282388572}
-  - {fileID: 651277835}
 --- !u!195 &1840892330
 NavMeshAgent:
   m_ObjectHideFlags: 0
