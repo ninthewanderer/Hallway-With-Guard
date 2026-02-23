@@ -6,15 +6,13 @@ using UnityEngine.AI;
 /*
  2/23/2026 PROGRESS:
  - Basic ability to navigate to specified positions using NavMesh.
- - Confirmed basic btree functionality. 
+ - Confirmed full btree functionality (including looping).
  - Patrol() is complete.
- - Rest() is (mostly) complete.
+ - Rest() is complete.
  - Hunt() runs at base & interrupts Patrol() & Rest().
  
- - Rest() has a bug where it infinitely loops after the first time it is called.
  - Hunt() is not done.
  - Create POV colliders for cat & test collision functionality.
- - Ensure btree repeatedly loops rather than ending after one iteration (current setup is for debugging).
  */
 
 public class CatBehavior : MonoBehaviour
@@ -31,7 +29,7 @@ public class CatBehavior : MonoBehaviour
     
     // Tracks the cat's last action in the behavior tree. (Rest by default).
     private enum LastAction { REST, PATROL, HUNT, EAT };
-    private LastAction lastAction = LastAction.PATROL; // FIXME: set to PATROL to test Rest -> Patrol loop
+    private LastAction lastAction = LastAction.REST;
     
     // Tracks the current state of the behavior tree. (Running by default).
     private Node.Status treeStatus = Node.Status.RUNNING;
@@ -123,6 +121,7 @@ public class CatBehavior : MonoBehaviour
         {
             Debug.Log("The player has been caught!");
             gameOver = true;
+            lastAction = LastAction.HUNT;
             return Node.Status.SUCCESS;
         }
         
@@ -185,8 +184,9 @@ public class CatBehavior : MonoBehaviour
         if (finishedPatrol)
         {
             StopCoroutine(Patrolling());
-            state = ActionState.IDLE;
             lastAction = LastAction.PATROL;
+            finishedPatrol = false;
+            state = ActionState.IDLE;
             return Node.Status.SUCCESS;
         }
         
@@ -220,28 +220,24 @@ public class CatBehavior : MonoBehaviour
         finishedRest = true;
     }
     
-    // FIXME: breaks the Patrol -> Rest -> Patrol loop
     private Node.Status Rest()
     {
         // If the last action the cat performed was resting or hunting, fail to execute node.
         String lastActionString = GetLastAction();
         if (lastActionString.Equals("REST") || lastActionString.Equals("HUNT"))
         {
-            Debug.Log("Failed to rest!");
             return Node.Status.FAILURE;
         }
         
         // If the player was recently spotted, fail to execute node.
         if (playerSpotted)
         {
-            Debug.Log("Failed to rest!");
             return Node.Status.FAILURE;
         }
         
         // This will execute the first run-through of this node if it gets this far. 
         if (state == ActionState.IDLE)
         {
-            Debug.Log("Starting to rest...");
             state = ActionState.WORKING;
             StartCoroutine(Resting());
         }
@@ -249,7 +245,6 @@ public class CatBehavior : MonoBehaviour
         // When the Resting() coroutine sets finishedRest to true, this runs.
         if (finishedRest)
         {
-            Debug.Log("Finished resting!");
             StopCoroutine(Resting());
             lastAction = LastAction.REST;
             finishedRest = false;
@@ -258,11 +253,10 @@ public class CatBehavior : MonoBehaviour
         }
         
         // At default, set to running for every loop through the tree that the cat is working.
-        Debug.Log("Resting...");
         return Node.Status.RUNNING;
     }
 
-    // See if this can be specific colliders?
+    //FIXME: See if this can be specific colliders?
     private void OnTriggerEnter(Collider other)
     {
         // If the player enters any of the cat's colliders, it will immediately start hunting them down.
