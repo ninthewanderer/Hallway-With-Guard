@@ -11,6 +11,7 @@ using UnityEngine.AI;
  
  - Patrol(), Rest(), and Hunt() are not done.
  - Hunt() needs to be tested to see if it runs at base.
+ - Test functionality of the patrolPoints GameObject array.
  - Ensure btree repeatedly loops rather than ending after one iteration.
  */
 
