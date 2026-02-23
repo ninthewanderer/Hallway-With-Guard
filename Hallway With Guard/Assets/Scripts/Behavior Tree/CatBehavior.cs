@@ -3,6 +3,17 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+/*
+ 2/22/2026 PROGRESS:
+ - Basic ability to navigate to specified positions using NavMesh.
+ - Confirmed basic btree functionality. 
+ - Made a few basic methods that we will need for later.
+ 
+ - Patrol(), Rest(), and Hunt() are not done.
+ - Hunt() needs to be tested to see if it runs at base.
+ - Ensure btree repeatedly loops rather than ending after one iteration.
+ */
+
 public class CatBehavior : MonoBehaviour
 {
     // Cat's behavior tree.
