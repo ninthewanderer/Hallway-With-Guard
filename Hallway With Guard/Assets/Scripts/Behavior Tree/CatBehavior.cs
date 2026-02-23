@@ -62,6 +62,7 @@ public class CatBehavior : MonoBehaviour
         // Calls Process() to start processing/running the nodes within the tree.
         if (treeStatus != Node.Status.SUCCESS)
         {
+            Debug.Log("Processing tree.");
             treeStatus = tree.Process();
         }
     }
