@@ -8,11 +8,11 @@ using UnityEngine.AI;
  - Basic ability to navigate to specified positions using NavMesh.
  - Confirmed basic btree functionality. 
  - Patrol() is complete.
- - Hunt() has been tested and runs at base.
- - Hunt() interrupts Patrol() successfully.
+ - Rest() is (mostly) complete.
+ - Hunt() runs at base & interrupts Patrol() & Rest().
  
- - Rest() and Hunt() are not done.
- - Ensure Hunt() interrupts Rest().
+ - Rest() has a bug where it infinitely loops after the first time it is called.
+ - Hunt() is not done.
  - Create POV colliders for cat & test collision functionality.
  - Ensure btree repeatedly loops rather than ending after one iteration (current setup is for debugging).
  */
@@ -31,7 +31,7 @@ public class CatBehavior : MonoBehaviour
     
     // Tracks the cat's last action in the behavior tree. (Rest by default).
     private enum LastAction { REST, PATROL, HUNT, EAT };
-    private LastAction lastAction = LastAction.REST;
+    private LastAction lastAction = LastAction.PATROL; // FIXME: set to PATROL to test Rest -> Patrol loop
     
     // Tracks the current state of the behavior tree. (Running by default).
     private Node.Status treeStatus = Node.Status.RUNNING;
@@ -46,6 +46,10 @@ public class CatBehavior : MonoBehaviour
     public GameObject bed;
     public GameObject[] patrolPoints;
     private bool finishedPatrol = false;
+    private bool finishedRest = false;
+    
+    // Debugging bool.
+    private bool gameOver = false;
 
     void Start()
     {
@@ -75,7 +79,7 @@ public class CatBehavior : MonoBehaviour
     void Update()
     {
         // Calls Process() to start processing/running the nodes within the tree.
-        if (treeStatus != Node.Status.SUCCESS)
+        if (!gameOver)
         {
             treeStatus = tree.Process();
         }
@@ -118,6 +122,7 @@ public class CatBehavior : MonoBehaviour
         if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
         {
             Debug.Log("The player has been caught!");
+            gameOver = true;
             return Node.Status.SUCCESS;
         }
         
@@ -179,7 +184,7 @@ public class CatBehavior : MonoBehaviour
         // When the Patrolling() coroutine sets finishedPatrol to true, this runs.
         if (finishedPatrol)
         {
-            StopAllCoroutines();
+            StopCoroutine(Patrolling());
             state = ActionState.IDLE;
             lastAction = LastAction.PATROL;
             return Node.Status.SUCCESS;
@@ -189,45 +194,71 @@ public class CatBehavior : MonoBehaviour
         return Node.Status.RUNNING;
     }
 
-    // FIXME: needs to make cat wait after arriving at bed.
+    private IEnumerator Resting()
+    {
+        // Sets the cat's destination to its bed.
+        agent.SetDestination(bed.transform.position);
+        bool arrivedAtBed = false;
+        
+        // While the cat hasn't arrived at the bed and is on their way to it, this will execute.
+        while (!arrivedAtBed && agent.pathStatus != NavMeshPathStatus.PathComplete)
+        {
+            // Calculates the distance between the bed and the cat.
+            float distToBed = Vector3.Distance(bed.transform.position, transform.position);
+                
+            // If the cat reaches the bed, arrivedAtBed will be set to true.
+            if (distToBed <= agent.stoppingDistance)
+            { 
+                arrivedAtBed = true;
+            }
+        }
+        
+        // After the cat arrives at the bed, it will "rest" for 5 seconds.
+        yield return new WaitForSeconds(5f); 
+
+        // After the cat finishes resting, this lets Rest() know that Resting() was successful.
+        finishedRest = true;
+    }
+    
+    // FIXME: breaks the Patrol -> Rest -> Patrol loop
     private Node.Status Rest()
     {
         // If the last action the cat performed was resting or hunting, fail to execute node.
         String lastActionString = GetLastAction();
         if (lastActionString.Equals("REST") || lastActionString.Equals("HUNT"))
         {
+            Debug.Log("Failed to rest!");
             return Node.Status.FAILURE;
         }
         
         // If the player was recently spotted, fail to execute node.
         if (playerSpotted)
         {
+            Debug.Log("Failed to rest!");
             return Node.Status.FAILURE;
         }
-
-        // Calculates the distance between the bed and the cat.
-        float distanceToBed = Vector3.Distance(bed.transform.position, transform.position);
         
-        // If the cat is idle, they will go to the bed.
+        // This will execute the first run-through of this node if it gets this far. 
         if (state == ActionState.IDLE)
         {
-            agent.SetDestination(bed.transform.position);
+            Debug.Log("Starting to rest...");
             state = ActionState.WORKING;
+            StartCoroutine(Resting());
         }
-        else if (Vector3.Distance(agent.pathEndPosition, bed.transform.position) > agent.stoppingDistance)
-        { // If the cat doesn't make it to the bed, the node fails.
-            state = ActionState.IDLE;
-            return Node.Status.FAILURE;
-        }
-        else if (distanceToBed <= agent.stoppingDistance)
-        { // If the cat reaches the bed, the node succeeds.
-            state = ActionState.IDLE;
+        
+        // When the Resting() coroutine sets finishedRest to true, this runs.
+        if (finishedRest)
+        {
+            Debug.Log("Finished resting!");
+            StopCoroutine(Resting());
             lastAction = LastAction.REST;
-            Debug.Log("Rest was successful!");
+            finishedRest = false;
+            state = ActionState.IDLE;
             return Node.Status.SUCCESS;
         }
         
-        Debug.Log("Rest is running...");
+        // At default, set to running for every loop through the tree that the cat is working.
+        Debug.Log("Resting...");
         return Node.Status.RUNNING;
     }
 
