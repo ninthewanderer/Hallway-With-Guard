@@ -4,16 +4,11 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /*
- 2/23/2026 PROGRESS:
- - Basic ability to navigate to specified positions using NavMesh.
- - Confirmed full btree functionality (including looping).
- - Patrol() is complete.
- - Rest() is complete.
- - Hunt() runs at base & interrupts Patrol() & Rest().
+ 2/24/2026 PROGRESS:
+ - Basic 3 behaviors (Hunt, Patrol, Rest) are complete.
  
- - Hunt() is not done.
- - Create POV colliders for cat & test collision functionality.
- */
+ - Need to implement optional mousetrap checking & eating behaviors.
+*/
 
 public class CatBehavior : MonoBehaviour
 {
@@ -38,13 +33,19 @@ public class CatBehavior : MonoBehaviour
     public GameObject player;
     private float playerSpeed;
     private CharacterController playerController;
-    public bool playerSpotted =  false; // FIXME: make sure this gets changed back to private.
+    private bool playerSpotted =  false; 
+    public float detectionDelay = 0.2f;
+    public float viewRadius;
+    [Range(0, 360)] public float viewAngle;
+    public LayerMask targetMask;
+    public LayerMask obstacleMask;
     
     // Variables needed for navigation.
     public GameObject bed;
     public GameObject[] patrolPoints;
     private bool finishedPatrol = false;
     private bool finishedRest = false;
+    public float actionDelay = 5f;
     
     // Debugging bool.
     private bool gameOver = false;
@@ -72,6 +73,9 @@ public class CatBehavior : MonoBehaviour
         huntPatrolRest.AddChild(rest);
         
         tree.AddChild(huntPatrolRest);
+        
+        // Starts the coroutine for constant player detection.
+        StartCoroutine(Hunting());
     }
 
     void Update()
@@ -88,7 +92,59 @@ public class CatBehavior : MonoBehaviour
         return lastAction.ToString();
     }
 
-    // FIXME: still needs win conditions, collider detections, and a way to turn playerSpotted off.
+    private void FieldOfViewCheck()
+    {
+        // Collider array that will be constantly searching for the player on the layer targetMask.
+        Collider[] rangeChecks = Physics.OverlapSphere(transform.position, viewRadius, targetMask);
+        
+        // If length isn't 0, that means something has been detected (the player).
+        if (rangeChecks.Length != 0)
+        {
+            Transform target = rangeChecks[0].transform;
+            
+            // Calculates the direction of the target's position.
+            Vector3 directionToTarget = (target.position - transform.position).normalized;
+            
+            // Calculates the angle from the player to the enemy and checks it against viewAngle.
+            if (Vector3.Angle(transform.forward, directionToTarget) < viewAngle / 2)
+            {
+                float distanceToTarget = Vector3.Distance(transform.position, target.position);
+                
+                // Creates a raycast from the cat's to the target and checks if there are any obstacles in the way.
+                if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
+                {
+                    playerSpotted = true;
+                }
+                else
+                {
+                    playerSpotted = false;
+                }
+            }
+            else
+            {
+                playerSpotted = false;
+            }
+        }
+        else if (playerSpotted) 
+        { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this coroutine.
+            playerSpotted = false;
+        }
+    }
+    
+    private IEnumerator Hunting()
+    {
+        // The delay between each run of this coroutine.
+        WaitForSeconds wait = new WaitForSeconds(detectionDelay);
+
+        // infinite loop to ensure there is constant player detection
+        while (true)
+        {
+            yield return wait;
+            FieldOfViewCheck();
+        }
+    }
+    
+    // FIXME: still needs to be fixed when win conditions are implemented
     private Node.Status Hunt()
     {
         if (!playerSpotted)
@@ -96,9 +152,9 @@ public class CatBehavior : MonoBehaviour
             return Node.Status.FAILURE;
         }
         
-        // Since the player has been spotted, the cat's state must be HUNTING no matter what and all coroutines stop.
-        StopAllCoroutines();
+        // Since the player has been spotted, the cat's state must be HUNTING and their last action must be hunting.
         state = ActionState.HUNTING;
+        lastAction = LastAction.HUNT;
 
         // Calculates the direction the player is heading towards.
         Vector3 playerDirection = player.transform.position - transform.position;
@@ -115,13 +171,11 @@ public class CatBehavior : MonoBehaviour
         // If the player is moving, calculates and goes to where they're heading based on their speed.
         float lookAhead = playerDirection.magnitude/(playerSpeed) + playerController.velocity.magnitude;
         agent.SetDestination(player.transform.position + player.transform.forward * lookAhead);
-        // Do something here to check if player is caught by the cat
 
         if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
         {
             Debug.Log("The player has been caught!");
             gameOver = true;
-            lastAction = LastAction.HUNT;
             return Node.Status.SUCCESS;
         }
         
@@ -130,28 +184,17 @@ public class CatBehavior : MonoBehaviour
     
     private IEnumerator Patrolling()
     {
+        // The delay until the cat moves to the next patrol point.
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(actionDelay);
+        
         // Begins iterating through the patrolPoints array.
         foreach (GameObject waypoint in patrolPoints)
         {
             // Sets cat's path to the waypoint.
             agent.SetDestination(waypoint.transform.position);
-            bool arrivedAtPatrol = false;
             
-            // While the cat hasn't arrived at the patrol and is on their way to it, this will execute.
-            while (!arrivedAtPatrol && agent.pathStatus != NavMeshPathStatus.PathComplete)
-            {
-                // Calculates the distance between the current patrol and the cat.
-                float distToPatrol = Vector3.Distance(waypoint.transform.position, transform.position);
-                
-                // If the cat reaches the patrol point, arrivedAtPatrol will be set to true.
-                if (distToPatrol <= agent.stoppingDistance)
-                { 
-                    arrivedAtPatrol = true;
-                }
-            }
-            
-            // After the cat arrives at the patrol point, it will wait 5 seconds before continuing or ending its patrol.
-            yield return new WaitForSeconds(5f); 
+            // Waits for the cat to arrive at the patrol point before continuing or ending its patrol.
+            yield return wait;
         }
 
         // After the cat iterates through all of its patrol points, this lets Patrol() know that the patrol was successful.
@@ -196,25 +239,14 @@ public class CatBehavior : MonoBehaviour
 
     private IEnumerator Resting()
     {
+        // The delay until the cat moves away from the bed.
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(actionDelay);
+        
         // Sets the cat's destination to its bed.
         agent.SetDestination(bed.transform.position);
-        bool arrivedAtBed = false;
         
-        // While the cat hasn't arrived at the bed and is on their way to it, this will execute.
-        while (!arrivedAtBed && agent.pathStatus != NavMeshPathStatus.PathComplete)
-        {
-            // Calculates the distance between the bed and the cat.
-            float distToBed = Vector3.Distance(bed.transform.position, transform.position);
-                
-            // If the cat reaches the bed, arrivedAtBed will be set to true.
-            if (distToBed <= agent.stoppingDistance)
-            { 
-                arrivedAtBed = true;
-            }
-        }
-        
-        // After the cat arrives at the bed, it will "rest" for 5 seconds.
-        yield return new WaitForSeconds(5f); 
+        // Waits for the cat to get to the bed and "rest".
+        yield return wait;
 
         // After the cat finishes resting, this lets Rest() know that Resting() was successful.
         finishedRest = true;
@@ -254,15 +286,5 @@ public class CatBehavior : MonoBehaviour
         
         // At default, set to running for every loop through the tree that the cat is working.
         return Node.Status.RUNNING;
-    }
-
-    //FIXME: See if this can be specific colliders?
-    private void OnTriggerEnter(Collider other)
-    {
-        // If the player enters any of the cat's colliders, it will immediately start hunting them down.
-        if (other.CompareTag("Player"))
-        {
-            playerSpotted = true;
-        }
     }
 }
