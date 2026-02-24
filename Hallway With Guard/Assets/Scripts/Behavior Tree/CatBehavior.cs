@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -33,7 +34,7 @@ public class CatBehavior : MonoBehaviour
     public GameObject player;
     private float playerSpeed;
     private CharacterController playerController;
-    private bool playerSpotted =  false; 
+    [System.NonSerialized] public bool playerSpotted =  false; 
     public float detectionDelay = 0.2f;
     public float viewRadius;
     [Range(0, 360)] public float viewAngle;
