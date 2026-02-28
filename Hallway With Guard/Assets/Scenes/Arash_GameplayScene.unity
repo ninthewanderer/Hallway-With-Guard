@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 409299165}
   - component: {fileID: 409299164}
   - component: {fileID: 409299163}
-  - component: {fileID: 409299162}
+  - component: {fileID: 409299167}
   m_Layer: 0
   m_Name: Evil Cube
   m_TagString: Untagged
@@ -356,22 +356,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &409299162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 409299161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43cbfd055f7f5b24f9819c1ebf6ed49c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fadeDuration: 1
-  player: {fileID: 454683854}
-  fadeCanvasGroup: {fileID: 648975149}
-  nextSceneName: LoseScene
 --- !u!65 &409299163
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -461,6 +445,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &409299167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 409299161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3355f46142d98419baff6f0b1511ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeDuration: 1
+  player: {fileID: 454683854}
+  fadeCanvasGroup: {fileID: 648975149}
+  nextSceneName: LoseScene
 --- !u!1 &454683854
 GameObject:
   m_ObjectHideFlags: 0
@@ -535,10 +535,10 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1
-  m_Radius: 0.1
+  m_Height: 0.05
+  m_Radius: 0.05
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.1
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -943,8 +943,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.1
-  m_Height: 1
+  m_Radius: 0.05
+  m_Height: 0.05
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1097237521
@@ -1010,7 +1010,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 454683856}
@@ -1183,7 +1183,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.05
+  near clip plane: 0.02
   far clip plane: 1000
   field of view: 80
   orthographic: 0
@@ -1288,7 +1288,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1508066876}
   - component: {fileID: 1508066875}
-  - component: {fileID: 1508066874}
   - component: {fileID: 1508066877}
   m_Layer: 0
   m_Name: Ending Hitbox (WIN)
@@ -1297,22 +1296,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1508066874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1508066873}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43cbfd055f7f5b24f9819c1ebf6ed49c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fadeDuration: 1
-  player: {fileID: 454683854}
-  fadeCanvasGroup: {fileID: 648975149}
-  nextSceneName: WinScene
 --- !u!65 &1508066875
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameEnding : MonoBehaviour
+public class ChangeScene : MonoBehaviour
 {
     public float fadeDuration = 1f;
     public GameObject player;
