@@ -1,14 +1,14 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 /*
- 2/24/2026 PROGRESS:
- - Basic 3 behaviors (Hunt, Patrol, Rest) are complete.
+ 2/28/2026 PROGRESS:
+ - Added text to indicate when the player has been spotted by the cat.
  
- - Need to implement optional mousetrap checking & eating behaviors.
+ - Still need to implement optional mousetrap checking & eating behaviors.
 */
 
 public class CatBehavior : MonoBehaviour
@@ -40,6 +40,7 @@ public class CatBehavior : MonoBehaviour
     [Range(0, 360)] public float viewAngle;
     public LayerMask targetMask;
     public LayerMask obstacleMask;
+    public Text spottedText;
     
     // Variables needed for navigation.
     public GameObject bed;
@@ -115,19 +116,27 @@ public class CatBehavior : MonoBehaviour
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                 {
                     playerSpotted = true;
+                    spottedText.text = "Spotted!";
+                    spottedText.color = Color.red;
                 }
                 else
                 {
                     playerSpotted = false;
+                    spottedText.text = "Not Spotted.";
+                    spottedText.color = Color.green;
                 }
             }
             else
             {
+                spottedText.text = "Not Spotted.";
+                spottedText.color = Color.green;
                 playerSpotted = false;
             }
         }
         else if (playerSpotted) 
         { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this coroutine.
+            spottedText.text = "Not Spotted.";
+            spottedText.color = Color.green;
             playerSpotted = false;
         }
     }
