@@ -1,54 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class FirstPersonCamera : MonoBehaviour
+public class FirstPersonLook : MonoBehaviour
 {
-    [Header("References")]
-    public Transform orientation;            // assign the body that turns with yaw
-    public InputActionReference lookAction;  // reference to Player/Look action
-
-    [Header("Settings")]
+    [Header("Look Settings")]
+    public InputActionReference lookAction;
     public float mouseSensitivity = 100f;
     public float controllerSensitivity = 250f;
 
-    float xRot;
-    float yRot;
+    float pitch = 0f; // up/down
+    Transform playerBody;
 
     void Start()
     {
-        // lock cursor for FPS feel
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        playerBody = transform.parent;
+        lookAction?.action.Enable();
     }
 
     void Update()
     {
-        if (lookAction == null)
-            return;
+        if (lookAction == null) return;
 
-        // read input
-        Vector2 input = lookAction.action.ReadValue<Vector2>();
-
-        // detect controller vs mouse
-        bool usingController = Gamepad.current != null && input.magnitude > 0.01f;
-
+        Vector2 lookInput = lookAction.action.ReadValue<Vector2>();
+        bool usingController = Gamepad.current != null && lookInput.magnitude > 0.01f;
         float sens = usingController ? controllerSensitivity : mouseSensitivity;
 
-        // apply
-        float dx = input.x * sens * Time.deltaTime;
-        float dy = input.y * sens * Time.deltaTime;
+        float mouseX = lookInput.x * sens * Time.deltaTime;
+        float mouseY = lookInput.y * sens * Time.deltaTime;
 
-        yRot += dx;
-        xRot -= dy;
-        xRot = Mathf.Clamp(xRot, -90f, 90f);
+        // yaw -> rotate player body
+        playerBody.Rotate(Vector3.up * mouseX);
 
-        // rotate camera
-        transform.localRotation = Quaternion.Euler(xRot, yRot, 0);
-
-        // rotate body
-        if (orientation != null)
-            orientation.rotation = Quaternion.Euler(0, yRot, 0);
+        // pitch -> rotate camera up/down
+        pitch -= mouseY;
+        pitch = Mathf.Clamp(pitch, -90f, 90f);
+        transform.localRotation = Quaternion.Euler(pitch, 0, 0);
     }
 }
