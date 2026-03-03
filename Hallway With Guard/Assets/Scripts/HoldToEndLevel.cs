@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class HoldToEndLevel : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class HoldToEndLevel : MonoBehaviour
     public CanvasGroup fadeCanvasGroup;
     public string nextSceneName;
     public CanvasGroup interactPrompt;
-
+    public Text spottedText;
+    
     bool m_IsPlayerAtExit;
     bool m_StartEnding;
 
@@ -82,6 +84,7 @@ public class HoldToEndLevel : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
+        spottedText.enabled = false;
         fadeCanvasGroup.alpha = m_Timer / fadeDuration;
 
         if (m_Timer >= fadeDuration)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ChangeScene : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class ChangeScene : MonoBehaviour
     public GameObject player;
     public CanvasGroup fadeCanvasGroup;
     public string nextSceneName;
+    public Text spottedText;
 
     bool m_IsPlayerAtExit;
     float m_Timer;
@@ -33,6 +35,7 @@ public class ChangeScene : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
+        spottedText.enabled = false;
         fadeCanvasGroup.alpha = m_Timer / fadeDuration;
 
         if(m_Timer >= fadeDuration)
