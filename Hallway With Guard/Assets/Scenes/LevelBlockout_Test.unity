@@ -41109,6 +41109,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FadeToBlackImage
       objectReference: {fileID: 0}
+    - target: {fileID: 8257393754563407318, guid: 6392b790fe2156742aa9200de2702ceb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -49617,7 +49621,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -876546973899608171, guid: 8547ec39534635c4289065e5c5033f43, type: 3}
+  - {fileID: 2100000, guid: 70547c88d86f8d548b50ac764004c117, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
