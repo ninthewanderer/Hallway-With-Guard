@@ -54436,8 +54436,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 949072451}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: viewAngle
+      value: 130
+      objectReference: {fileID: 0}
+    - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: viewRadius
-      value: 25
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: spottedText
