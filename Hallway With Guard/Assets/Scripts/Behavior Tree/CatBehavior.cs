@@ -87,6 +87,10 @@ public class CatBehavior : MonoBehaviour
         if (!gameOver)
         {
             treeStatus = tree.Process();
+            if (playerSpotted)
+            {
+                transform.LookAt(player.transform.position);
+            }
         }
     }
 
@@ -168,7 +172,6 @@ public class CatBehavior : MonoBehaviour
         // Since the player has been spotted, the cat's state must be HUNTING and their last action must be hunting.
         state = ActionState.HUNTING;
         lastAction = LastAction.HUNT;
-        transform.LookAt(player.transform.position);
 
         // Calculates the direction the player is heading towards.
         Vector3 playerDirection = player.transform.position - transform.position;
