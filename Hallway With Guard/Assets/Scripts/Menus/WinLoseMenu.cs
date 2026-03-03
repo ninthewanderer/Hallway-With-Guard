@@ -11,12 +11,12 @@ public class WinLoseMenu : MonoBehaviour
     
     public void PlayAgain()
     {
-        SceneManager.LoadScene("LevelBlockout_Test");
+        SceneManager.LoadScene(1);
     }
 
     public void MainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene(0);
     }
 
     public void Quit()
