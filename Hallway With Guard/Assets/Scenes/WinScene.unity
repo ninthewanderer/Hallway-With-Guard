@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 133080409}
   - component: {fileID: 133080408}
   - component: {fileID: 133080407}
-  - component: {fileID: 133080410}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -199,18 +198,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &133080410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 133080406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56f654bbd97b6a34f96f9dd98fec6952, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &650421923
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,7 +310,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 354.32, y: 104}
+  m_AnchoredPosition: {x: 304, y: 104}
   m_SizeDelta: {x: 138.8, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &765264375
@@ -348,8 +335,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.88235295, b: 0.69411767, a: 1}
+    m_PressedColor: {r: 0.8784314, g: 0.7019608, b: 0.41960785, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -370,7 +357,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 133080410}
+      - m_Target: {fileID: 1782614206}
         m_TargetAssemblyTypeName: WinLoseMenu, Assembly-CSharp
         m_MethodName: PlayAgain
         m_Mode: 1
@@ -1183,7 +1170,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 354.32, y: -115.86001}
+  m_AnchoredPosition: {x: 303.99997, y: -115.86001}
   m_SizeDelta: {x: 138.8, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1462093112
@@ -1220,8 +1207,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.88235295, b: 0.69411767, a: 1}
+    m_PressedColor: {r: 0.8773585, g: 0.7006771, b: 0.41798684, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -1242,7 +1229,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 133080410}
+      - m_Target: {fileID: 1782614206}
         m_TargetAssemblyTypeName: WinLoseMenu, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
@@ -1329,7 +1316,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 354.32, y: -6.6400104}
+  m_AnchoredPosition: {x: 303.99997, y: -6.6400104}
   m_SizeDelta: {x: 138.8, y: 45}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1568270933
@@ -1366,8 +1353,8 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_HighlightedColor: {r: 1, g: 0.88208747, b: 0.6933962, a: 1}
+    m_PressedColor: {r: 0.8784314, g: 0.7019608, b: 0.41960785, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
@@ -1388,7 +1375,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 133080410}
+      - m_Target: {fileID: 1782614206}
         m_TargetAssemblyTypeName: WinLoseMenu, Assembly-CSharp
         m_MethodName: MainMenu
         m_Mode: 1
@@ -1438,6 +1425,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1568270931}
   m_CullTransparentMesh: 1
+--- !u!1 &1782614205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1782614207}
+  - component: {fileID: 1782614206}
+  m_Layer: 0
+  m_Name: MenuManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1782614206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782614205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56f654bbd97b6a34f96f9dd98fec6952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1782614207
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1782614205}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 566.5, y: 255.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1840654715
 GameObject:
   m_ObjectHideFlags: 0
@@ -1720,3 +1751,4 @@ SceneRoots:
   - {fileID: 1315809114}
   - {fileID: 1244096537}
   - {fileID: 133080409}
+  - {fileID: 1782614207}
