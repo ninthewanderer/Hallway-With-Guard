@@ -5,12 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Arash_GameplayScene.unity
     guid: d2c5fc62a17a66249b8f41cb25d1b65f
+  - enabled: 1
+    path: Assets/Scenes/LevelBlockout_Test.unity
+    guid: d3edce4b097031f459db564f053caa14
   - enabled: 1
     path: Assets/Scenes/WinScene.unity
     guid: eb6f0708291f23146a63f5c54d2bc61e
