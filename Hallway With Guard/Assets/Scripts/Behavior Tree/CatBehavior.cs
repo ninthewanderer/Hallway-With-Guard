@@ -120,6 +120,7 @@ public class CatBehavior : MonoBehaviour
                     spottedText.text = "Spotted!";
                     spottedText.color = Color.red;
                     agent.speed = playerSpeed + 5;
+                    transform.LookAt(player.transform.position);
                 }
                 else
                 {
