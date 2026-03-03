@@ -12,6 +12,7 @@ public class HoldToEndLevel : MonoBehaviour
     public GameObject player;
     public CanvasGroup fadeCanvasGroup;
     public string nextSceneName;
+    public CanvasGroup interactPrompt;
 
     bool m_IsPlayerAtExit;
     bool m_StartEnding;
@@ -33,6 +34,7 @@ public class HoldToEndLevel : MonoBehaviour
         if (other.gameObject == player)
         {
             m_IsPlayerAtExit = true;
+            interactPrompt.alpha = 1f;   // show
         }
     }
 
@@ -42,6 +44,7 @@ public class HoldToEndLevel : MonoBehaviour
         {
             m_IsPlayerAtExit = false;
             m_HoldTimer = 0f;
+            interactPrompt.alpha = 0f;   // hide
         }
     }
 
