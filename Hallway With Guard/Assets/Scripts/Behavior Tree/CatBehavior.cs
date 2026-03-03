@@ -120,7 +120,6 @@ public class CatBehavior : MonoBehaviour
                     spottedText.text = "Spotted!";
                     spottedText.color = Color.red;
                     agent.speed = playerSpeed + 5;
-                    transform.LookAt(player.transform.position);
                 }
                 else
                 {
@@ -169,6 +168,7 @@ public class CatBehavior : MonoBehaviour
         // Since the player has been spotted, the cat's state must be HUNTING and their last action must be hunting.
         state = ActionState.HUNTING;
         lastAction = LastAction.HUNT;
+        transform.LookAt(player.transform.position);
 
         // Calculates the direction the player is heading towards.
         Vector3 playerDirection = player.transform.position - transform.position;
