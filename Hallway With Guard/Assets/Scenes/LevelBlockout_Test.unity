@@ -54417,11 +54417,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_Acceleration
-      value: 15
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_AngularSpeed
-      value: 500
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_StoppingDistance

@@ -89,6 +89,7 @@ public class CatBehavior : MonoBehaviour
             treeStatus = tree.Process();
             if (playerSpotted)
             {
+                //agent.SetDestination(player.transform.position);
                 transform.LookAt(player.transform.position);
             }
         }
@@ -124,6 +125,7 @@ public class CatBehavior : MonoBehaviour
                     spottedText.text = "Spotted!";
                     spottedText.color = Color.red;
                     agent.speed = playerSpeed + 5;
+                    agent.acceleration = agent.speed;
                 }
                 else
                 {
@@ -131,6 +133,7 @@ public class CatBehavior : MonoBehaviour
                     spottedText.text = "Not Spotted.";
                     spottedText.color = Color.green;
                     agent.speed = catSpeed;
+                    agent.acceleration = agent.speed;
                 }
             }
             else
@@ -174,20 +177,20 @@ public class CatBehavior : MonoBehaviour
         lastAction = LastAction.HUNT;
 
         // Calculates the direction the player is heading towards.
-        Vector3 playerDirection = player.transform.position - transform.position;
-        float relativeDestination =
-            Vector3.Angle(transform.forward, transform.TransformVector(player.transform.forward));
-        float angleToTarget = Vector3.Angle(transform.forward, transform.TransformVector(playerDirection));
-
-        // If the player isn't moving, the cat will "pounce".
-        if ((angleToTarget > 90 && relativeDestination < 20) || playerController.velocity.magnitude < 0.1f)
-        {
-            agent.SetDestination(player.transform.position);
-        }
+        // Vector3 playerDirection = player.transform.position - transform.position;
+        // float relativeDestination =
+        //     Vector3.Angle(transform.forward, transform.TransformVector(player.transform.forward));
+        // float angleToTarget = Vector3.Angle(transform.forward, transform.TransformVector(playerDirection));
+        //
+        // // If the player isn't moving, the cat will "pounce".
+        // if ((angleToTarget > 90 && relativeDestination < 20) || playerController.velocity.magnitude < 0.1f)
+        // {
+        //     agent.SetDestination(player.transform.position);
+        // }
         
         // If the player is moving, calculates and goes to where they're heading based on their speed.
-        float lookAhead = playerDirection.magnitude/(playerSpeed) + playerController.velocity.magnitude;
-        agent.SetDestination(player.transform.position + player.transform.forward * lookAhead);
+        //float lookAhead = playerDirection.magnitude/(playerSpeed) + playerController.velocity.magnitude;
+        agent.SetDestination(player.transform.position); // had  + player.transform.forward * lookAhead at the end
 
         if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
         {
