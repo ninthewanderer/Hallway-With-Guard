@@ -48,6 +48,7 @@ public class CatBehavior : MonoBehaviour
     private bool finishedPatrol = false;
     private bool finishedRest = false;
     public float actionDelay = 5f;
+    public float catSpeed;
     
     // Debugging bool.
     private bool gameOver = false;
@@ -118,12 +119,14 @@ public class CatBehavior : MonoBehaviour
                     playerSpotted = true;
                     spottedText.text = "Spotted!";
                     spottedText.color = Color.red;
+                    agent.speed = playerSpeed + 5;
                 }
                 else
                 {
                     playerSpotted = false;
                     spottedText.text = "Not Spotted.";
                     spottedText.color = Color.green;
+                    agent.speed = catSpeed;
                 }
             }
             else

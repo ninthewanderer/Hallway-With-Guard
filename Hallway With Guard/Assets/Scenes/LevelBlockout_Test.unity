@@ -54421,7 +54421,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_AngularSpeed
-      value: 200
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_StoppingDistance
@@ -54435,6 +54435,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 949072451}
+    - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: catSpeed
+      value: 55
+      objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: viewAngle
       value: 130
