@@ -2,22 +2,28 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 /*
- 2/28/2026 PROGRESS:
- - Added text to indicate when the player has been spotted by the cat.
+ 3/6/2026 PROGRESS:
+ - Add headers to the Inspector to better organize and explain public variables.
+ - Replaced indication text with sprites instead.
+ - Resting and Patrolling behaviors now function as intended; delays between actions can be modified as needed.
+ - Cat can now look around when patrolling; all parts of this behavior are modifiable in the Inspector.
  
  - Still need to implement optional mousetrap checking & eating behaviors.
+ - Better bed position needs to be chosen.
+ - Need more waypoints and a dynamic waypoint-"choosing"/randomization system.
+ - Need to add NavMesh Links allowing the cat to jump onto obstacles (requires final level blockout).
+ - Need to add more obstacles to the Obstacle Layer (requires final level blockout).
+ - NavMesh needs updates (requires final level blockout).
 */
 
 public class CatBehavior : MonoBehaviour
 {
     // Cat's behavior tree.
     private BehaviorTree tree;
-    
-    // Used to store NavMesh info.
-    private NavMeshAgent agent;
     
     // Tracks the cat's currently state in the behavior tree. (Idle by default).
     private enum ActionState { IDLE, WORKING, HUNTING };
@@ -30,27 +36,43 @@ public class CatBehavior : MonoBehaviour
     // Tracks the current state of the behavior tree. (Running by default).
     private Node.Status treeStatus = Node.Status.RUNNING;
     
+    // Used to store NavMesh info.
+    private NavMeshAgent agent;
+    
+    [Header("────── Player Tracking ──────")]
     // Variables needed to track the player.
     public GameObject player;
     private float playerSpeed;
-    private CharacterController playerController;
     [System.NonSerialized] public bool playerSpotted =  false; 
     public float detectionDelay = 0.2f;
     public float viewRadius;
     [Range(0, 360)] public float viewAngle;
     public LayerMask targetMask;
     public LayerMask obstacleMask;
-    public Text spottedText;
+    [Space(10)]
     
+    [Header("────── UI Elements ──────")]
+    // Image + sprites to change the indication UI.
+    public Image eyes;
+    public Sprite spottedSprite;
+    public Sprite unspottedSprite;
+    [Space(10)]
+    
+    [Header("────── Navigation ──────")]
     // Variables needed for navigation.
     public GameObject bed;
     public GameObject[] patrolPoints;
     private bool finishedPatrol = false;
     private bool finishedRest = false;
-    public float actionDelay = 5f;
+    private bool finishedLooking = false;
+    public float patrolDelay = 5f;
+    public float lookDelay = 5f;
+    public float restDelay = 5f;
+    public float rotateSpeed = 0.5f;
+    public int rotateAmount = 90;
     public float catSpeed;
     
-    // Debugging bool.
+    // Bool to let the tree know when to stop running.
     private bool gameOver = false;
 
     void Start()
@@ -59,7 +81,6 @@ public class CatBehavior : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         
         // Obtains the player's CharacterController component & movement speed.
-        playerController = player.GetComponent<CharacterController>();
         playerSpeed = player.GetComponent<PlayerMovement>().moveSpeed;
         
         // Creates a new behavior tree.
@@ -122,31 +143,27 @@ public class CatBehavior : MonoBehaviour
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, obstacleMask))
                 {
                     playerSpotted = true;
-                    spottedText.text = "Spotted!";
-                    spottedText.color = Color.red;
+                    eyes.sprite = spottedSprite;
                     agent.speed = playerSpeed + 5;
                     agent.acceleration = agent.speed;
                 }
                 else
                 {
                     playerSpotted = false;
-                    spottedText.text = "Not Spotted.";
-                    spottedText.color = Color.green;
+                    eyes.sprite = unspottedSprite;
                     agent.speed = catSpeed;
                     agent.acceleration = agent.speed;
                 }
             }
             else
             {
-                spottedText.text = "Not Spotted.";
-                spottedText.color = Color.green;
+                eyes.sprite = unspottedSprite;
                 playerSpotted = false;
             }
         }
         else if (playerSpotted) 
         { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this coroutine.
-            spottedText.text = "Not Spotted.";
-            spottedText.color = Color.green;
+            eyes.sprite = unspottedSprite;
             playerSpotted = false;
         }
     }
@@ -164,7 +181,6 @@ public class CatBehavior : MonoBehaviour
         }
     }
     
-    // FIXME: still needs to be fixed when win conditions are implemented
     private Node.Status Hunt()
     {
         if (!playerSpotted)
@@ -176,25 +192,12 @@ public class CatBehavior : MonoBehaviour
         state = ActionState.HUNTING;
         lastAction = LastAction.HUNT;
 
-        // Calculates the direction the player is heading towards.
-        // Vector3 playerDirection = player.transform.position - transform.position;
-        // float relativeDestination =
-        //     Vector3.Angle(transform.forward, transform.TransformVector(player.transform.forward));
-        // float angleToTarget = Vector3.Angle(transform.forward, transform.TransformVector(playerDirection));
-        //
-        // // If the player isn't moving, the cat will "pounce".
-        // if ((angleToTarget > 90 && relativeDestination < 20) || playerController.velocity.magnitude < 0.1f)
-        // {
-        //     agent.SetDestination(player.transform.position);
-        // }
-        
-        // If the player is moving, calculates and goes to where they're heading based on their speed.
-        //float lookAhead = playerDirection.magnitude/(playerSpeed) + playerController.velocity.magnitude;
-        agent.SetDestination(player.transform.position); // had  + player.transform.forward * lookAhead at the end
+        // Moves the cat towards the player.
+        agent.SetDestination(player.transform.position); 
 
+        // If the player is close enough to the cat, they have been caught.
         if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
         {
-            Debug.Log("The player has been caught!");
             gameOver = true;
             return Node.Status.SUCCESS;
         }
@@ -205,7 +208,7 @@ public class CatBehavior : MonoBehaviour
     private IEnumerator Patrolling()
     {
         // The delay until the cat moves to the next patrol point.
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(actionDelay);
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(patrolDelay);
         
         // Begins iterating through the patrolPoints array.
         foreach (GameObject waypoint in patrolPoints)
@@ -214,11 +217,37 @@ public class CatBehavior : MonoBehaviour
             agent.SetDestination(waypoint.transform.position);
             
             // Waits for the cat to arrive at the patrol point before continuing or ending its patrol.
+            yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, waypoint.transform.position) 
+                                             <= agent.stoppingDistance);
+
+            StartCoroutine(LookAround());
+            yield return new WaitUntil(() => finishedLooking);
             yield return wait;
         }
 
         // After the cat iterates through all of its patrol points, this lets Patrol() know that the patrol was successful.
         finishedPatrol = true;
+    }
+
+    private IEnumerator LookAround()
+    {
+        // Rotates the cat to the right.
+        for (int i = 0; i < rotateAmount; i++)
+        {
+            transform.Rotate(0, rotateSpeed, 0);
+            yield return 0;
+        }
+
+        yield return new WaitForSecondsRealtime(lookDelay);
+
+        // Rotates the cat to the left.
+        for (int i = 0; i < rotateAmount; i++)
+        {
+            transform.Rotate(0, rotateSpeed * -1, 0);
+            yield return 0;
+        }
+        
+        finishedLooking = true;
     }
     
     private Node.Status Patrol()
@@ -260,12 +289,14 @@ public class CatBehavior : MonoBehaviour
     private IEnumerator Resting()
     {
         // The delay until the cat moves away from the bed.
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(actionDelay);
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(restDelay);
         
         // Sets the cat's destination to its bed.
         agent.SetDestination(bed.transform.position);
         
         // Waits for the cat to get to the bed and "rest".
+        yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, bed.transform.position) 
+                                         <= agent.stoppingDistance);
         yield return wait;
 
         // After the cat finishes resting, this lets Rest() know that Resting() was successful.
