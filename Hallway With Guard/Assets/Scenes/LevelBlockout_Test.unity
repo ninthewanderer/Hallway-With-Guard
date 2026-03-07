@@ -10086,8 +10086,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6136510685851834438, guid: 5a291fdef8872e1478b238fde77715bb, type: 3}
-      propertyPath: m_RenderPostProcessing
+      propertyPath: m_RenderShadows
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6136510685851834438, guid: 5a291fdef8872e1478b238fde77715bb, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6893929926089048378, guid: 5a291fdef8872e1478b238fde77715bb, type: 3}
       propertyPath: m_LocalScale.x
