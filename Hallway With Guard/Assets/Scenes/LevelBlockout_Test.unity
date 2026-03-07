@@ -10162,6 +10162,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8570220610466962719, guid: 5a291fdef8872e1478b238fde77715bb, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8570220610466962719, guid: 5a291fdef8872e1478b238fde77715bb, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
@@ -52351,6 +52355,14 @@ PrefabInstance:
       value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: actionCue
+      value: 
+      objectReference: {fileID: 8300000, guid: 38ae9412b379ebb48acefebd68035e96, type: 3}
+    - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: idleSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 38ae9412b379ebb48acefebd68035e96, type: 3}
+    - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: lookSpeed
       value: 0.01
       objectReference: {fileID: 0}
@@ -52371,6 +52383,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: fb633f604aadffe45966e10191cd7397, type: 3}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: detectionSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 2641a5aa2c5b42f469bb865015f4bcf7, type: 3}
+    - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: unspottedSprite
       value: 
       objectReference: {fileID: 21300000, guid: 516414f744a7a7846bd0959e39bccd7f, type: 3}
@@ -52382,7 +52398,16 @@ PrefabInstance:
       propertyPath: 'patrolPoints.Array.data[1]'
       value: 
       objectReference: {fileID: 2012841078}
-    m_RemovedComponents: []
+    - target: {fileID: 8125144710717750871, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 949072451}
+    - target: {fileID: 8125144710717750871, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: fadeCanvasGroup
+      value: 
+      objectReference: {fileID: 889866499}
+    m_RemovedComponents:
+    - {fileID: 8125144710717750871, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -52392,6 +52417,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 409758236321451564, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1972652005}
+    - targetCorrespondingSourceObject: {fileID: 409758236321451564, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1972652006}
   m_SourcePrefab: {fileID: 100100000, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
 --- !u!43 &1856028083
 Mesh:
@@ -55609,7 +55637,7 @@ MonoBehaviour:
   player: {fileID: 949072451}
   fadeCanvasGroup: {fileID: 889866499}
   nextSceneName: LoseScene
-  spottedText: {fileID: 486558578}
+  spottedEyes: {fileID: 1533642215}
 --- !u!65 &1972652005
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -55631,6 +55659,103 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.09, y: 1.66, z: 1.85}
   m_Center: {x: 0, y: 1.01, z: 0.29}
+--- !u!82 &1972652006
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1972651999}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 87.91
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 1
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.50277776
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1974903636
 GameObject:
   m_ObjectHideFlags: 0
