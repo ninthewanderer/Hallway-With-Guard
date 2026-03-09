@@ -10,7 +10,8 @@ public class ChangeScene : MonoBehaviour
     public GameObject player;
     public CanvasGroup fadeCanvasGroup;
     public string nextSceneName;
-    public Text spottedText;
+    public Image spottedEyes;
+    private CharacterController playerController;
 
     bool m_IsPlayerAtExit;
     float m_Timer;
@@ -19,10 +20,16 @@ public class ChangeScene : MonoBehaviour
     {
         if (other.gameObject == player)
         {
+            playerController.enabled = false;
             m_IsPlayerAtExit = true;
         }
     }
 
+    void Start()
+    {
+        playerController = player.GetComponent<CharacterController>();
+    }
+    
     void Update ()
     {
         if(m_IsPlayerAtExit)
@@ -35,7 +42,8 @@ public class ChangeScene : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
-        spottedText.enabled = false;
+        playerController.enabled = false;
+        spottedEyes.enabled = false;
         fadeCanvasGroup.alpha = m_Timer / fadeDuration;
 
         if(m_Timer >= fadeDuration)

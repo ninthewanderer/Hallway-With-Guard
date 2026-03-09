@@ -6,15 +6,17 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 /*
- 3/6/2026 PROGRESS:
- - Add headers to the Inspector to better organize and explain public variables.
- - Replaced indication text with sprites instead.
- - Resting and Patrolling behaviors now function as intended; delays between actions can be modified as needed.
- - Cat can now look around when patrolling; all parts of this behavior are modifiable in the Inspector.
+ 3/6/2026 PROGRESS
+ Completed Tasks:
+ - Added visible field of vision light to cat.
+ - Added sound effects for when the player is spotted & the cat finishes an action.
  
- - Still need to implement optional mousetrap checking & eating behaviors.
- - Better bed position needs to be chosen.
+ To Do Next:
+ - Need to implement mousetrap checking & eating behaviors.
  - Need more waypoints and a dynamic waypoint-"choosing"/randomization system.
+ 
+ Blocked Tasks:
+ - Better bed position needs to be chosen (requires final level blockout).
  - Need to add NavMesh Links allowing the cat to jump onto obstacles (requires final level blockout).
  - Need to add more obstacles to the Obstacle Layer (requires final level blockout).
  - NavMesh needs updates (requires final level blockout).
@@ -51,13 +53,6 @@ public class CatBehavior : MonoBehaviour
     public LayerMask obstacleMask;
     [Space(10)]
     
-    [Header("────── UI Elements ──────")]
-    // Image + sprites to change the indication UI.
-    public Image eyes;
-    public Sprite spottedSprite;
-    public Sprite unspottedSprite;
-    [Space(10)]
-    
     [Header("────── Navigation ──────")]
     // Variables needed for navigation.
     public GameObject bed;
@@ -71,6 +66,20 @@ public class CatBehavior : MonoBehaviour
     public float rotateSpeed = 0.5f;
     public int rotateAmount = 90;
     public float catSpeed;
+    public float catSpeedOffset = 5f;
+    [Space(10)]
+    
+    [Header("────── UI & Audio ──────")]
+    // Image + sprites to change the indication UI.
+    public Image eyes;
+    public Sprite spottedSprite;
+    public Sprite unspottedSprite;
+    
+    // Audio source & clips needed for playing sounds.
+    private AudioSource catAudioSource;
+    public AudioClip detectionSound;
+    public AudioClip actionCue;
+    private bool clipHasPlayed = false;
     
     // Bool to let the tree know when to stop running.
     private bool gameOver = false;
@@ -82,6 +91,9 @@ public class CatBehavior : MonoBehaviour
         
         // Obtains the player's CharacterController component & movement speed.
         playerSpeed = player.GetComponent<PlayerMovement>().moveSpeed;
+        
+        // Obtains the cat's Audio Source component.
+        catAudioSource = GetComponent<AudioSource>();
         
         // Creates a new behavior tree.
         tree = new BehaviorTree();
@@ -100,6 +112,9 @@ public class CatBehavior : MonoBehaviour
         
         // Starts the coroutine for constant player detection.
         StartCoroutine(Hunting());
+        
+        // Starts the coroutine to constantly check if detectionSound needs to be played.
+        StartCoroutine(DetectionSound());
     }
 
     void Update()
@@ -144,12 +159,13 @@ public class CatBehavior : MonoBehaviour
                 {
                     playerSpotted = true;
                     eyes.sprite = spottedSprite;
-                    agent.speed = playerSpeed + 5;
+                    agent.speed = playerSpeed + catSpeedOffset;
                     agent.acceleration = agent.speed;
                 }
                 else
                 {
                     playerSpotted = false;
+                    clipHasPlayed = false;
                     eyes.sprite = unspottedSprite;
                     agent.speed = catSpeed;
                     agent.acceleration = agent.speed;
@@ -159,12 +175,14 @@ public class CatBehavior : MonoBehaviour
             {
                 eyes.sprite = unspottedSprite;
                 playerSpotted = false;
+                clipHasPlayed = false;
             }
         }
         else if (playerSpotted) 
         { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this coroutine.
             eyes.sprite = unspottedSprite;
             playerSpotted = false;
+            clipHasPlayed = false;
         }
     }
     
@@ -199,6 +217,7 @@ public class CatBehavior : MonoBehaviour
         if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
         {
             gameOver = true;
+            Debug.Log("Player has been caught!");
             return Node.Status.SUCCESS;
         }
         
@@ -227,6 +246,10 @@ public class CatBehavior : MonoBehaviour
 
         // After the cat iterates through all of its patrol points, this lets Patrol() know that the patrol was successful.
         finishedPatrol = true;
+        
+        // Plays an audio cue to let the player know the cat has finished its patrol.
+        catAudioSource.clip = actionCue;
+        catAudioSource.PlayOneShot(actionCue);
     }
 
     private IEnumerator LookAround()
@@ -301,6 +324,10 @@ public class CatBehavior : MonoBehaviour
 
         // After the cat finishes resting, this lets Rest() know that Resting() was successful.
         finishedRest = true;
+        
+        // Plays an audio cue to let the player know the cat has finished its rest.
+        catAudioSource.clip = actionCue;
+        catAudioSource.PlayOneShot(actionCue);
     }
     
     private Node.Status Rest()
@@ -337,5 +364,28 @@ public class CatBehavior : MonoBehaviour
         
         // At default, set to running for every loop through the tree that the cat is working.
         return Node.Status.RUNNING;
+    }
+
+    private IEnumerator DetectionSound()
+    {
+        // Delay between each run of this coroutine to prevent Unity crashing.
+        WaitForSeconds wait = new WaitForSeconds(0.2f);
+        
+        // Infinite loop to ensure this is constantly running.
+        while (true)
+        {
+            yield return wait;
+            
+            // If the player is spotted and the audio clip hasn't played, it will play.
+            if (playerSpotted && !clipHasPlayed)
+            {
+                catAudioSource.clip = detectionSound;
+                catAudioSource.PlayOneShot(detectionSound);
+                clipHasPlayed = true;
+                
+                // Ensures the clip doesn't repeatedly play and overlap with itself.
+                yield return new WaitUntil(() => !catAudioSource.isPlaying);
+            }
+        }
     }
 }
