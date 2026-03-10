@@ -45657,7 +45657,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 516414f744a7a7846bd0959e39bccd7f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3d5a9fcfc80ebb0468b40e498ebb68b1, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -52397,7 +52397,7 @@ PrefabInstance:
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: actionCue
       value: 
-      objectReference: {fileID: 8300000, guid: 38ae9412b379ebb48acefebd68035e96, type: 3}
+      objectReference: {fileID: 8300000, guid: ad450f86a2b316248889c803624bf18d, type: 3}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: idleSound
       value: 
@@ -52421,15 +52421,15 @@ PrefabInstance:
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: spottedSprite
       value: 
-      objectReference: {fileID: 21300000, guid: fb633f604aadffe45966e10191cd7397, type: 3}
+      objectReference: {fileID: 21300000, guid: 3631066633d1137438e6696e01b7d0b6, type: 3}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: detectionSound
       value: 
-      objectReference: {fileID: 8300000, guid: 2641a5aa2c5b42f469bb865015f4bcf7, type: 3}
+      objectReference: {fileID: 8300000, guid: f82f3e504e5ee0644950fcd7558f7355, type: 3}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: unspottedSprite
       value: 
-      objectReference: {fileID: 21300000, guid: 516414f744a7a7846bd0959e39bccd7f, type: 3}
+      objectReference: {fileID: 21300000, guid: 3d5a9fcfc80ebb0468b40e498ebb68b1, type: 3}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: 'patrolPoints.Array.data[0]'
       value: 
