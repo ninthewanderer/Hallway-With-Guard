@@ -119,6 +119,84 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &173653221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173653222}
+  - component: {fileID: 173653224}
+  - component: {fileID: 173653223}
+  m_Layer: 5
+  m_Name: Panel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &173653222
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173653221}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.17015624, y: 0.625, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 456204115}
+  - {fileID: 788193480}
+  - {fileID: 1338011136}
+  m_Father: {fileID: 788047836}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 16.3, y: -9.1}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &173653223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173653221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &173653224
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173653221}
+  m_CullTransparentMesh: 1
 --- !u!1 &334932899
 GameObject:
   m_ObjectHideFlags: 0
@@ -185,8 +263,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4292138196
+  m_fontColor: {r: 0.8301887, g: 0.8301887, b: 0.8301887, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -285,16 +363,16 @@ RectTransform:
   m_GameObject: {fileID: 456204114}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1.8399957}
+  m_LocalScale: {x: 0.77892005, y: 0.45070425, z: 0.33567375}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 334932900}
-  m_Father: {fileID: 623148195}
+  m_Father: {fileID: 173653222}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 242, y: 104.000046}
-  m_SizeDelta: {x: 191.7, y: 120.99}
+  m_AnchorMin: {x: 0.19000001, y: 0.73}
+  m_AnchorMax: {x: 0.86, y: 0.91}
+  m_AnchoredPosition: {x: 8.2966, y: 0.8766403}
+  m_SizeDelta: {x: 124.7, y: 102.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &456204116
 MonoBehaviour:
@@ -436,7 +514,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.09364946, y: 0.28053027}
   m_AnchorMax: {x: 0.79164946, y: 0.6945303}
-  m_AnchoredPosition: {x: -1.5999985, y: -0.59999275}
+  m_AnchoredPosition: {x: -1.6000061, y: -0.59999084}
   m_SizeDelta: {x: 83.200005, y: 66.79999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &538879322
@@ -634,9 +712,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 788047836}
-  - {fileID: 456204115}
-  - {fileID: 788193480}
-  - {fileID: 1338011136}
   - {fileID: 1874235075}
   - {fileID: 1099853893}
   m_Father: {fileID: 0}
@@ -675,7 +750,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 15.09, y: 7.1, z: 5.4815}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 173653222}
   m_Father: {fileID: 623148195}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -750,16 +826,16 @@ RectTransform:
   m_GameObject: {fileID: 788193479}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1.8399957}
+  m_LocalScale: {x: 0.77892005, y: 0.45070425, z: 0.33567375}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2060154295}
-  m_Father: {fileID: 623148195}
+  m_Father: {fileID: 173653222}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 242, y: -17.5}
-  m_SizeDelta: {x: 191.7, y: 120.99}
+  m_AnchorMin: {x: 0.19000001, y: 0.46}
+  m_AnchorMax: {x: 0.91, y: 0.61}
+  m_AnchoredPosition: {x: 5.7966003, y: 1.9963341}
+  m_SizeDelta: {x: 119.7, y: 105.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &788193481
 MonoBehaviour:
@@ -1214,16 +1290,16 @@ RectTransform:
   m_GameObject: {fileID: 1338011135}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 1.8399957}
+  m_LocalScale: {x: 0.77892005, y: 0.45070425, z: 0.33567375}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 538879321}
-  m_Father: {fileID: 623148195}
+  m_Father: {fileID: 173653222}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 242, y: -139.06}
-  m_SizeDelta: {x: 191.7, y: 120.99}
+  m_AnchorMin: {x: 0.19000001, y: 0.19000001}
+  m_AnchorMax: {x: 0.8, y: 0.34}
+  m_AnchoredPosition: {x: 11.2966, y: 1.6025314}
+  m_SizeDelta: {x: 130.7, y: 105.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1338011137
 MonoBehaviour:
