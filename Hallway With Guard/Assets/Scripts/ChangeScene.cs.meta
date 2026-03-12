@@ -1,2 +1,16 @@
 fileFormatVersion: 2
 guid: 4d3355f46142d98419baff6f0b1511ac
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - player: {instanceID: 0}
+  - fadeCanvasGroup: {instanceID: 0}
+  - spottedEyes: {instanceID: 0}
+  - audioSource: {instanceID: 0}
+  - caughtSound: {fileID: 8300000, guid: b927ff0cca5cef746bf4649829ee7dbb, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
