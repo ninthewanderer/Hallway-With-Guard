@@ -11,15 +11,27 @@ public class ChangeScene : MonoBehaviour
     public CanvasGroup fadeCanvasGroup;
     public string nextSceneName;
     public Image spottedEyes;
+
+    [Header("Caught Audio")]
+    public AudioSource audioSource;
+    public AudioClip caughtSound;
+
     private CharacterController playerController;
 
     bool m_IsPlayerAtExit;
     float m_Timer;
+    bool hasPlayedCaughtSound;
 
-    void OnTriggerEnter (Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == player)
         {
+            if (!hasPlayedCaughtSound && audioSource != null && caughtSound != null)
+            {
+                audioSource.PlayOneShot(caughtSound);
+                hasPlayedCaughtSound = true;
+            }
+
             playerController.enabled = false;
             m_IsPlayerAtExit = true;
         }
@@ -29,16 +41,16 @@ public class ChangeScene : MonoBehaviour
     {
         playerController = player.GetComponent<CharacterController>();
     }
-    
-    void Update ()
+
+    void Update()
     {
-        if(m_IsPlayerAtExit)
+        if (m_IsPlayerAtExit)
         {
             EndLevel();
         }
     }
 
-    void EndLevel ()
+    void EndLevel()
     {
         m_Timer += Time.deltaTime;
 
@@ -46,7 +58,7 @@ public class ChangeScene : MonoBehaviour
         spottedEyes.enabled = false;
         fadeCanvasGroup.alpha = m_Timer / fadeDuration;
 
-        if(m_Timer >= fadeDuration)
+        if (m_Timer >= fadeDuration)
         {
             SceneManager.LoadScene(nextSceneName);
         }
