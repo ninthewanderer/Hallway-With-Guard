@@ -15,14 +15,14 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu.unity
     guid: 6a6aa7cd32461d1488d3816b2a151725
   - enabled: 1
-    path: Assets/Scenes/LevelBlockout_Test.unity
-    guid: d3edce4b097031f459db564f053caa14
-  - enabled: 1
     path: Assets/Scenes/WinScene.unity
     guid: eb6f0708291f23146a63f5c54d2bc61e
   - enabled: 1
     path: Assets/Scenes/LoseScene.unity
     guid: 48a4d940b99df32469449d96b76b2cf8
+  - enabled: 1
+    path: Assets/Scenes/Final_Blockout.unity
+    guid: 714341ab940eab847a687546426b7e5b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
