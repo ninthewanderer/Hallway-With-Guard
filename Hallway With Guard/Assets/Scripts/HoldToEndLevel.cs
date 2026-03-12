@@ -14,7 +14,7 @@ public class HoldToEndLevel : MonoBehaviour
     public CanvasGroup fadeCanvasGroup;
     public string nextSceneName;
     public CanvasGroup interactPrompt;
-    public Text spottedText;
+    // public Text spottedText;
     
     bool m_IsPlayerAtExit;
     bool m_StartEnding;
@@ -84,7 +84,7 @@ public class HoldToEndLevel : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
-        spottedText.enabled = false;
+        // spottedText.enabled = false;
         fadeCanvasGroup.alpha = m_Timer / fadeDuration;
 
         if (m_Timer >= fadeDuration)

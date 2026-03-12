@@ -11,7 +11,7 @@ public class WinLoseMenu : MonoBehaviour
     
     public void PlayAgain()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(3);
     }
 
     public void MainMenu()
