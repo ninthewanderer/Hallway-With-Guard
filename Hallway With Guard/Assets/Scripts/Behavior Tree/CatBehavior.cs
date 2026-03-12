@@ -6,20 +6,15 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 /*
- 3/6/2026 PROGRESS
+ 3/12/2026 PROGRESS
  Completed Tasks:
- - Added visible field of vision light to cat.
- - Added sound effects for when the player is spotted & the cat finishes an action.
+ - Adjusted cat to fit within the new scene.
+ - Added & updated temporary waypoints + resting spot. 
+ - Baked NavMesh onto the current scene.
+ - Added NavMesh Links to the scene, allowing the cat to jump on surfaces if needed.
  
  To Do Next:
- - Need to implement mousetrap checking & eating behaviors.
  - Need more waypoints and a dynamic waypoint-"choosing"/randomization system.
- 
- Blocked Tasks:
- - Better bed position needs to be chosen (requires final level blockout).
- - Need to add NavMesh Links allowing the cat to jump onto obstacles (requires final level blockout).
- - Need to add more obstacles to the Obstacle Layer (requires final level blockout).
- - NavMesh needs updates (requires final level blockout).
 */
 
 public class CatBehavior : MonoBehaviour
