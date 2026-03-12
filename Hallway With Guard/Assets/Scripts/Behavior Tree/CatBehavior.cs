@@ -14,7 +14,9 @@ using UnityEngine.UI;
  - Added NavMesh Links to the scene, allowing the cat to jump on surfaces if needed.
  
  To Do Next:
- - Need more waypoints and a dynamic waypoint-"choosing"/randomization system.
+ - May add or change waypoints, TBD. Level is a little small right now.
+ - May add or change NavMesh Links.
+ - Implement cat model & animations.
 */
 
 public class CatBehavior : MonoBehaviour
