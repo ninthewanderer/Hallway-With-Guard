@@ -14791,6 +14791,11 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!82 &243876356 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 9167739212050658203, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+  m_PrefabInstance: {fileID: 1312258419}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &254648113
 GameObject:
   m_ObjectHideFlags: 0
@@ -59412,6 +59417,14 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1524866463}
+    - target: {fileID: 8125144710717750871, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 243876356}
+    - target: {fileID: 8125144710717750871, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: caughtSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 69fc34a3334509940b378728f8f2f452, type: 3}
     - target: {fileID: 8125144710717750871, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: spottedEyes
       value: 
