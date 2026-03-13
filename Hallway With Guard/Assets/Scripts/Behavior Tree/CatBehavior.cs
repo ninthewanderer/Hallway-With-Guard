@@ -11,6 +11,8 @@ using UnityEngine.UI;
  - Adjusted cat collider to account for fringe scenarios where the player cannot be caught.
  - Updated gameOver bool to be public and modified ChangeScene and PlayerMovement to reference it.
  - gameOver will now be changed in ChangeScene which will determine when the behavior tree stops.
+ - Debugged script to ensure everything is currently functional.
+ - Cat now pauses and looks around after the player escapes from its hunting behavior.
  
  To Do Next:
  - May add or change waypoints, TBD. Level is a little small right now.
@@ -43,6 +45,7 @@ public class CatBehavior : MonoBehaviour
     private float playerSpeed;
     [System.NonSerialized] public bool playerSpotted =  false; 
     public float detectionDelay = 0.2f;
+    public float huntCooldown = 5f;
     public float viewRadius;
     [Range(0, 360)] public float viewAngle;
     public LayerMask targetMask;
@@ -121,7 +124,6 @@ public class CatBehavior : MonoBehaviour
             treeStatus = tree.Process();
             if (playerSpotted)
             {
-                //agent.SetDestination(player.transform.position);
                 transform.LookAt(player.transform.position);
             }
         }
@@ -199,16 +201,21 @@ public class CatBehavior : MonoBehaviour
     {
         if (!playerSpotted)
         {
+            if (lastAction == LastAction.HUNT)
+            {
+                StartCoroutine(LookAfterHunting());
+            }
+            
             return Node.Status.FAILURE;
         }
         
         // Since the player has been spotted, the cat's state must be HUNTING and their last action must be hunting.
         state = ActionState.HUNTING;
         lastAction = LastAction.HUNT;
-
+        
         // Moves the cat towards the player.
         agent.SetDestination(player.transform.position); 
-
+        
         // If the player is close enough to the cat, they have been caught.
         if (gameOver)
         {
@@ -236,6 +243,7 @@ public class CatBehavior : MonoBehaviour
 
             StartCoroutine(LookAround());
             yield return new WaitUntil(() => finishedLooking);
+            finishedLooking = false;
             yield return wait;
         }
 
@@ -382,5 +390,22 @@ public class CatBehavior : MonoBehaviour
                 yield return new WaitUntil(() => !catAudioSource.isPlaying);
             }
         }
+    }
+
+    private IEnumerator LookAfterHunting()
+    {
+        // The delay until the cat moves on from hunting.
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(huntCooldown);
+
+        // Ensures cat will only start looking around after arriving at its destination.
+        yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, agent.destination) 
+                                         <= agent.stoppingDistance);
+        StartCoroutine(LookAround());
+        yield return new WaitUntil(() => finishedLooking);
+        
+        // Once the cat finishes looking around, finishedLooking is once again false and the cat can be idle.
+        finishedLooking = false;
+        yield return wait;
+        state = ActionState.IDLE;
     }
 }

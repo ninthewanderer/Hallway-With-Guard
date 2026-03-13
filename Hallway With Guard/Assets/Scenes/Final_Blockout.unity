@@ -59746,15 +59746,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_Speed
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_Height
       value: 1.88
       objectReference: {fileID: 0}
     - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6568659452516180290, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: m_StoppingDistance
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: bed
@@ -59770,7 +59774,7 @@ PrefabInstance:
       objectReference: {fileID: 1524866463}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: catSpeed
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: actionCue
@@ -59782,7 +59786,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: rotateSpeed
-      value: 5
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
+      propertyPath: rotateAmount
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: spottedSprite
@@ -59790,7 +59798,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 3631066633d1137438e6696e01b7d0b6, type: 3}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: catSpeedOffset
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6817302135835419070, guid: 937c19a91d7a84a4089780cad3b62173, type: 3}
       propertyPath: detectionSound
@@ -73168,8 +73176,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.54, y: 0.58, z: 0.53}
-  m_Center: {x: 0, y: -0.23, z: 0}
+  m_Size: {x: 1.5540285, y: 0.58, z: 1.500491}
+  m_Center: {x: 0.026436329, y: -0.22999999, z: -0.48524553}
 --- !u!43 &1641583577
 Mesh:
   m_ObjectHideFlags: 0
