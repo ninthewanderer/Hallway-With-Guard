@@ -22,6 +22,9 @@ public class ChangeScene : MonoBehaviour
     float m_Timer;
     bool hasPlayedCaughtSound;
 
+    // A private reference to the CatBehavior script, needed to tell the script when the game is over.
+    private CatBehavior gameOverState;
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == player)
@@ -32,6 +35,7 @@ public class ChangeScene : MonoBehaviour
                 hasPlayedCaughtSound = true;
             }
 
+            gameOverState.gameOver = true;
             playerController.enabled = false;
             m_IsPlayerAtExit = true;
         }
@@ -39,6 +43,7 @@ public class ChangeScene : MonoBehaviour
 
     void Start()
     {
+        gameOverState = FindFirstObjectByType<CatBehavior>();
         playerController = player.GetComponent<CharacterController>();
     }
 
@@ -54,6 +59,7 @@ public class ChangeScene : MonoBehaviour
     {
         m_Timer += Time.deltaTime;
 
+        gameOverState.gameOver = true;
         playerController.enabled = false;
         spottedEyes.enabled = false;
         fadeCanvasGroup.alpha = m_Timer / fadeDuration;

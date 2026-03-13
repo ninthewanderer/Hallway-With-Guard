@@ -28,9 +28,14 @@ public class PlayerMovement : MonoBehaviour
 
     Transform cameraTransform;
     float footstepTimer;
+    
+    // Private reference to the CatBehavior script so that it can access the gameOver bool.
+    private CatBehavior gameOverState;
+    private bool isGameOver;
 
     void Start()
     {
+        gameOverState = FindFirstObjectByType<CatBehavior>();
         controller = GetComponent<CharacterController>();
 
         cameraTransform = GetComponentInChildren<Camera>()?.transform;
@@ -42,6 +47,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        // Need to constantly check if the game is over yet so that, if it is, controller.Move won't be called. 
+        isGameOver = gameOverState.gameOver;
+        
         wasGrounded = isGrounded;
         isGrounded = controller.isGrounded;
 
@@ -58,8 +66,11 @@ public class PlayerMovement : MonoBehaviour
         camRight.Normalize();
 
         Vector3 moveDir = camForward * input.y + camRight * input.x;
-        controller.Move(moveDir * moveSpeed * Time.deltaTime);
-
+        if (!isGameOver)
+        {
+            controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        }
+        
         bool isMoving = input.magnitude > 0.1f;
 
         if (isGrounded && isMoving)
@@ -84,7 +95,10 @@ public class PlayerMovement : MonoBehaviour
         }
 
         velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+        if (!isGameOver)
+        {
+            controller.Move(velocity * Time.deltaTime);
+        }
 
         if (!wasGrounded && isGrounded)
         {

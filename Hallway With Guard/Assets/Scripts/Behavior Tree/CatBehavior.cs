@@ -6,12 +6,11 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 /*
- 3/12/2026 PROGRESS
+ 3/13/2026 PROGRESS
  Completed Tasks:
- - Adjusted cat to fit within the new scene.
- - Added & updated temporary waypoints + resting spot. 
- - Baked NavMesh onto the current scene.
- - Added NavMesh Links to the scene, allowing the cat to jump on surfaces if needed.
+ - Adjusted cat collider to account for fringe scenarios where the player cannot be caught.
+ - Updated gameOver bool to be public and modified ChangeScene and PlayerMovement to reference it.
+ - gameOver will now be changed in ChangeScene which will determine when the behavior tree stops.
  
  To Do Next:
  - May add or change waypoints, TBD. Level is a little small right now.
@@ -79,7 +78,7 @@ public class CatBehavior : MonoBehaviour
     private bool clipHasPlayed = false;
     
     // Bool to let the tree know when to stop running.
-    private bool gameOver = false;
+    public bool gameOver = false;
 
     void Start()
     {
@@ -211,9 +210,8 @@ public class CatBehavior : MonoBehaviour
         agent.SetDestination(player.transform.position); 
 
         // If the player is close enough to the cat, they have been caught.
-        if (Vector3.Distance(player.transform.position, transform.position) <= agent.stoppingDistance)
+        if (gameOver)
         {
-            gameOver = true;
             Debug.Log("Player has been caught!");
             return Node.Status.SUCCESS;
         }
