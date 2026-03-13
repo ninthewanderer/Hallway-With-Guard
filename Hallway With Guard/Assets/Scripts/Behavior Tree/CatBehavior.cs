@@ -11,13 +11,16 @@ using UnityEngine.UI;
  - Adjusted cat collider to account for fringe scenarios where the player cannot be caught.
  - Updated gameOver bool to be public and modified ChangeScene and PlayerMovement to reference it.
  - gameOver will now be changed in ChangeScene which will determine when the behavior tree stops.
- - Debugged script to ensure everything is currently functional.
  - Cat now pauses and looks around after the player escapes from its hunting behavior.
+ - Cat now has a really cool custom shader that gives it an outline :D
+ - Added more NavMesh Links so that the cat's jumping behavior can be a little more dynamic.
+ - Cat now looks at the door after jumping on its resting spot.
+ - Modified some waypoint positions slightly so that the cat's LookAround coroutine is a little less awkward-looking.
  
  To Do Next:
+ - Implement cat animations.
  - May add or change waypoints, TBD. Level is a little small right now.
  - May add or change NavMesh Links.
- - Implement cat model & animations.
 */
 
 public class CatBehavior : MonoBehaviour
@@ -81,7 +84,7 @@ public class CatBehavior : MonoBehaviour
     private bool clipHasPlayed = false;
     
     // Bool to let the tree know when to stop running.
-    public bool gameOver = false;
+    [System.NonSerialized] public bool gameOver = false;
 
     void Start()
     {
@@ -240,7 +243,7 @@ public class CatBehavior : MonoBehaviour
             // Waits for the cat to arrive at the patrol point before continuing or ending its patrol.
             yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, waypoint.transform.position) 
                                              <= agent.stoppingDistance);
-
+            
             StartCoroutine(LookAround());
             yield return new WaitUntil(() => finishedLooking);
             finishedLooking = false;
@@ -323,6 +326,14 @@ public class CatBehavior : MonoBehaviour
         // Waits for the cat to get to the bed and "rest".
         yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, bed.transform.position) 
                                          <= agent.stoppingDistance);
+        
+        // Rotates the cat 180 degrees to the left.
+        for (int i = 0; i < 180; i++)
+        {
+            transform.Rotate(0, (rotateSpeed * 2) * -1, 0);
+            yield return 0;
+        }
+        
         yield return wait;
 
         // After the cat finishes resting, this lets Rest() know that Resting() was successful.
