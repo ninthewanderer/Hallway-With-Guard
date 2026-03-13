@@ -41,7 +41,7 @@ public class GameMenu : MonoBehaviour
     {
         // ---------- MAIN MENU ----------
         if (startButton != null)
-            startButton.onClick.AddListener(() => SceneManager.LoadScene(mainMenuSceneName));
+            startButton.onClick.AddListener(() => SceneManager.LoadScene(3));
 
         if (settingsButton != null)
             settingsButton.onClick.AddListener(OpenSettings);
