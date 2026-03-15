@@ -6,21 +6,9 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 /*
- 3/13/2026 PROGRESS
+ 3/15/2026 PROGRESS
  Completed Tasks:
- - Adjusted cat collider to account for fringe scenarios where the player cannot be caught.
- - Updated gameOver bool to be public and modified ChangeScene and PlayerMovement to reference it.
- - gameOver will now be changed in ChangeScene which will determine when the behavior tree stops.
- - Cat now pauses and looks around after the player escapes from its hunting behavior.
- - Cat now has a really cool custom shader that gives it an outline :D
- - Added more NavMesh Links so that the cat's jumping behavior can be a little more dynamic.
- - Cat now looks at the door after jumping on its resting spot.
- - Modified some waypoint positions slightly so that the cat's LookAround coroutine is a little less awkward-looking.
- 
- To Do Next:
- - Implement cat animations.
- - May add or change waypoints, TBD. Level is a little small right now.
- - May add or change NavMesh Links.
+ - Implemented cat animations. Woohoo!
 */
 
 public class CatBehavior : MonoBehaviour
@@ -29,18 +17,19 @@ public class CatBehavior : MonoBehaviour
     private BehaviorTree tree;
     
     // Tracks the cat's currently state in the behavior tree. (Idle by default).
-    private enum ActionState { IDLE, WORKING, HUNTING };
+    private enum ActionState { IDLE, PATROLLING, RESTING, LOOKING, HUNTING };
     private ActionState state = ActionState.IDLE;
     
     // Tracks the cat's last action in the behavior tree. (Rest by default).
-    private enum LastAction { REST, PATROL, HUNT, EAT };
+    private enum LastAction { REST, PATROL, HUNT };
     private LastAction lastAction = LastAction.REST;
     
     // Tracks the current state of the behavior tree. (Running by default).
     private Node.Status treeStatus = Node.Status.RUNNING;
     
-    // Used to store NavMesh info.
+    // Used to store NavMesh info & Animation info.
     private NavMeshAgent agent;
+    private Animator catAnimator;
     
     [Header("────── Player Tracking ──────")]
     // Variables needed to track the player.
@@ -88,14 +77,13 @@ public class CatBehavior : MonoBehaviour
 
     void Start()
     {
-        // Obtains NavMeshAgent component from the Inspector.
+        // Obtains needed components from the Inspector.
         agent = GetComponent<NavMeshAgent>();
+        catAnimator = GetComponent<Animator>();
+        catAudioSource = GetComponent<AudioSource>();
         
         // Obtains the player's CharacterController component & movement speed.
         playerSpeed = player.GetComponent<PlayerMovement>().moveSpeed;
-        
-        // Obtains the cat's Audio Source component.
-        catAudioSource = GetComponent<AudioSource>();
         
         // Creates a new behavior tree.
         tree = new BehaviorTree();
@@ -112,11 +100,10 @@ public class CatBehavior : MonoBehaviour
         
         tree.AddChild(huntPatrolRest);
         
-        // Starts the coroutine for constant player detection.
+        // Starts the coroutines for constant player detection, detectionSound audio, and animation.
         StartCoroutine(Hunting());
-        
-        // Starts the coroutine to constantly check if detectionSound needs to be played.
         StartCoroutine(DetectionSound());
+        StartCoroutine(Animate());
     }
 
     void Update()
@@ -237,6 +224,9 @@ public class CatBehavior : MonoBehaviour
         // Begins iterating through the patrolPoints array.
         foreach (GameObject waypoint in patrolPoints)
         {
+            // Ensures cat is set to patrolling state so the next walking animation plays.
+            state = ActionState.PATROLLING;
+            
             // Sets cat's path to the waypoint.
             agent.SetDestination(waypoint.transform.position);
             
@@ -250,7 +240,8 @@ public class CatBehavior : MonoBehaviour
             yield return wait;
         }
 
-        // After the cat iterates through all of its patrol points, this lets Patrol() know that the patrol was successful.
+        // After the cat iterates through all of its patrol points, finishedPatrol is marked true.
+        state = ActionState.PATROLLING;
         finishedPatrol = true;
         
         // Plays an audio cue to let the player know the cat has finished its patrol.
@@ -260,6 +251,8 @@ public class CatBehavior : MonoBehaviour
 
     private IEnumerator LookAround()
     {
+        state = ActionState.LOOKING; 
+        
         // Rotates the cat to the right.
         for (int i = 0; i < rotateAmount; i++)
         {
@@ -297,7 +290,7 @@ public class CatBehavior : MonoBehaviour
         // This will execute the first run-through of this node if it gets this far. 
         if (state == ActionState.IDLE)
         {
-            state = ActionState.WORKING;
+            state = ActionState.PATROLLING;
             StartCoroutine(Patrolling());
         }
 
@@ -328,6 +321,7 @@ public class CatBehavior : MonoBehaviour
                                          <= agent.stoppingDistance);
         
         // Rotates the cat 180 degrees to the left.
+        state = ActionState.LOOKING;
         for (int i = 0; i < 180; i++)
         {
             transform.Rotate(0, (rotateSpeed * 2) * -1, 0);
@@ -362,7 +356,8 @@ public class CatBehavior : MonoBehaviour
         // This will execute the first run-through of this node if it gets this far. 
         if (state == ActionState.IDLE)
         {
-            state = ActionState.WORKING;
+            // state = ActionState.WORKING;
+            state = ActionState.RESTING;
             StartCoroutine(Resting());
         }
         
@@ -386,7 +381,7 @@ public class CatBehavior : MonoBehaviour
         WaitForSeconds wait = new WaitForSeconds(0.2f);
         
         // Infinite loop to ensure this is constantly running.
-        while (true)
+        while (!gameOver)
         {
             yield return wait;
             
@@ -418,5 +413,43 @@ public class CatBehavior : MonoBehaviour
         finishedLooking = false;
         yield return wait;
         state = ActionState.IDLE;
+    }
+
+    private IEnumerator Animate()
+    {
+        // Delay between each run of this coroutine to prevent Unity crashing.
+        WaitForSeconds wait = new WaitForSeconds(0.2f);
+        
+        while (!gameOver)
+        {
+            yield return wait;
+            
+            if (state == ActionState.IDLE || state == ActionState.LOOKING)
+            {
+                // Plays the cat's Idle animation.
+                bool isRunning = catAnimator.GetBool("isRunning");
+                bool isWalking = catAnimator.GetBool("isWalking");
+                catAnimator.SetBool("isRunning", false);
+                catAnimator.SetBool("isWalking", false);
+            }
+            else if (state == ActionState.HUNTING)
+            {
+                // Plays the cat's Running animation.
+                bool isRunning = catAnimator.GetBool("isRunning");
+                bool isWalking = catAnimator.GetBool("isWalking");
+                catAnimator.SetBool("isRunning", true);
+                catAnimator.SetBool("isWalking", false);
+            }
+            else if (state == ActionState.PATROLLING || state == ActionState.RESTING)
+            {
+                // Plays the cat's Walking animation.
+                bool isRunning = catAnimator.GetBool("isRunning");
+                bool isWalking = catAnimator.GetBool("isWalking");
+                catAnimator.SetBool("isRunning", false);
+                catAnimator.SetBool("isWalking", true);
+            }
+        }
+
+        yield return null;
     }
 }
