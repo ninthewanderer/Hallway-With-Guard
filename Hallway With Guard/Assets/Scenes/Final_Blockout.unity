@@ -101698,7 +101698,7 @@ PrefabInstance:
     - target: {fileID: 3380336756782817961, guid: e5bb411ca313a0a4381371bb9aa5bb4e, type: 3}
       propertyPath: audioSource
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4240485771602315859}
     - target: {fileID: 3380336756782817961, guid: e5bb411ca313a0a4381371bb9aa5bb4e, type: 3}
       propertyPath: spottedEyes
       value: 
@@ -101834,6 +101834,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!82 &4240485771602315859 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 2921167175282707957, guid: e5bb411ca313a0a4381371bb9aa5bb4e, type: 3}
+  m_PrefabInstance: {fileID: 4240485771602315855}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8057369688082217806 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1812497672879625221, guid: 1a1b76ee30c78ab4887c38061f6d1eb2, type: 3}
