@@ -51170,6 +51170,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1721829038}
   - {fileID: 547828204}
   - {fileID: 1449877812}
   - {fileID: 2188061082972481399}
@@ -69574,6 +69575,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1039256610}
     m_Modifications:
+    - target: {fileID: 1895159438547217853, guid: 9910bf567892a2041b0dd87074ce51d1, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3775190037661707110, guid: 9910bf567892a2041b0dd87074ce51d1, type: 3}
       propertyPath: m_fontAsset
       value: 
@@ -78305,6 +78310,73 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!1 &1721829037
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1721829038}
+  - component: {fileID: 1721829040}
+  - component: {fileID: 1721829039}
+  m_Layer: 0
+  m_Name: Endgame Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1721829038
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721829037}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -974.54706, y: -539.0024, z: 0.809}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1039256610}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1721829039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721829037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a04cea2ec9f35445a3f4ce34540237a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cat: {fileID: 4240485771602315856}
+--- !u!65 &1721829040
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1721829037}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.11, y: 2.18, z: 1}
+  m_Center: {x: 0, y: 0.64, z: 0}
 --- !u!43 &1726414389
 Mesh:
   m_ObjectHideFlags: 0
@@ -101439,6 +101511,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3337724342663770010, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3337724342663770010, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3337724342663770010, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3337724342663770010, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -101485,6 +101569,18 @@ PrefabInstance:
     - target: {fileID: 3337724342663770010, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6152897170054813545, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6152897170054813545, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 6152897170054813545, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 6883375861777534275, guid: be3b8525673ad5341a63478121e7b01d, type: 3}
       propertyPath: m_Name
