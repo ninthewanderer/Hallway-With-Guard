@@ -24,7 +24,7 @@ public class CatBehavior : MonoBehaviour
     private enum LastAction { REST, PATROL, HUNT };
     private LastAction lastAction = LastAction.REST;
     
-    // Tracks the current state of the behavior tree. (Running by default).
+    // For debug purposes, tracks the current state of the behavior tree. (Running by default).
     private Node.Status treeStatus = Node.Status.RUNNING;
     
     // Used to store NavMesh info & Animation info.
@@ -58,6 +58,7 @@ public class CatBehavior : MonoBehaviour
     public int rotateAmount = 90;
     public float catSpeed;
     public float catSpeedOffset = 5f;
+    private bool isEndgame = false;
     [Space(10)]
     
     [Header("────── UI & Audio ──────")]
@@ -72,7 +73,7 @@ public class CatBehavior : MonoBehaviour
     public AudioClip actionCue;
     private bool clipHasPlayed = false;
     
-    // Bool to let the tree know when to stop running.
+    // Bool to let the tree & certain coroutines to know when to stop running.
     [System.NonSerialized] public bool gameOver = false;
 
     void Start()
@@ -152,21 +153,27 @@ public class CatBehavior : MonoBehaviour
                 }
                 else
                 {
-                    playerSpotted = false;
-                    clipHasPlayed = false;
-                    eyes.sprite = unspottedSprite;
-                    agent.speed = catSpeed;
-                    agent.acceleration = agent.speed;
+                    if (!isEndgame)
+                    {
+                        playerSpotted = false;
+                        clipHasPlayed = false;
+                        eyes.sprite = unspottedSprite;
+                        agent.speed = catSpeed;
+                        agent.acceleration = agent.speed;
+                    }
                 }
             }
             else
             {
-                eyes.sprite = unspottedSprite;
-                playerSpotted = false;
-                clipHasPlayed = false;
+                if (!isEndgame)
+                {
+                    eyes.sprite = unspottedSprite;
+                    playerSpotted = false;
+                    clipHasPlayed = false;
+                }
             }
         }
-        else if (playerSpotted) 
+        else if (playerSpotted && !isEndgame) 
         { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this coroutine.
             eyes.sprite = unspottedSprite;
             playerSpotted = false;
@@ -451,5 +458,22 @@ public class CatBehavior : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    public void endgameHunt()
+    {
+        isEndgame = true;
+        
+        StopCoroutine(LookAround());
+        StopCoroutine(Resting());
+        StopCoroutine(Patrolling());
+        
+        state = ActionState.HUNTING;
+        playerSpotted = true; 
+        eyes.sprite = spottedSprite;
+        agent.speed = playerSpeed + catSpeedOffset;
+        agent.acceleration = agent.speed;
+        
+        agent.SetDestination(player.transform.position);
     }
 }
