@@ -462,12 +462,15 @@ public class CatBehavior : MonoBehaviour
 
     public void endgameHunt()
     {
+        // If the player crosses the collider in the room 2 doorway, this will trigger.
         isEndgame = true;
         
+        // All running coroutines for possible current behaviors will stop.
         StopCoroutine(LookAround());
         StopCoroutine(Resting());
         StopCoroutine(Patrolling());
         
+        // The cat will prioritize hunting down the player and will not stop chasing them.
         state = ActionState.HUNTING;
         playerSpotted = true; 
         eyes.sprite = spottedSprite;
