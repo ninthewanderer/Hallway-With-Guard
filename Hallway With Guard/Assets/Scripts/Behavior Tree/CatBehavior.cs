@@ -198,7 +198,7 @@ public class CatBehavior : MonoBehaviour
             }
         }
         else if (playerSpotted && !isEndgame) 
-        { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this coroutine.
+        { // Ensures that playerSpotted won't be infinitely set to true after 1 loop of this method.
             eyes.sprite = unspottedSprite;
             playerSpotted = false;
             clipHasPlayed = false;
@@ -240,7 +240,6 @@ public class CatBehavior : MonoBehaviour
         // If the player is close enough to the cat, they have been caught.
         if (gameOver)
         {
-            Debug.Log("Player has been caught!");
             return Node.Status.SUCCESS;
         }
         
