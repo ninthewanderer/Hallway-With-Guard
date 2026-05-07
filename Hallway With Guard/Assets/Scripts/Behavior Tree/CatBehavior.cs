@@ -104,7 +104,6 @@ public class CatBehavior : MonoBehaviour
         // Starts the coroutines for constant player detection, detectionSound audio, and animation.
         StartCoroutine(Hunting());
         StartCoroutine(DetectionSound());
-        StartCoroutine(Animate());
     }
 
     void Update()
@@ -116,6 +115,31 @@ public class CatBehavior : MonoBehaviour
             if (playerSpotted)
             {
                 transform.LookAt(player.transform.position);
+            }
+            
+            if (state == ActionState.IDLE || state == ActionState.LOOKING)
+            {
+                // Plays the cat's Idle animation.
+                bool isRunning = catAnimator.GetBool("isRunning");
+                bool isWalking = catAnimator.GetBool("isWalking");
+                catAnimator.SetBool("isRunning", false);
+                catAnimator.SetBool("isWalking", false);
+            }
+            else if (state == ActionState.HUNTING)
+            {
+                // Plays the cat's Running animation.
+                bool isRunning = catAnimator.GetBool("isRunning");
+                bool isWalking = catAnimator.GetBool("isWalking");
+                catAnimator.SetBool("isRunning", true);
+                catAnimator.SetBool("isWalking", false);
+            }
+            else if (state == ActionState.PATROLLING || state == ActionState.RESTING)
+            {
+                // Plays the cat's Walking animation.
+                bool isRunning = catAnimator.GetBool("isRunning");
+                bool isWalking = catAnimator.GetBool("isWalking");
+                catAnimator.SetBool("isRunning", false);
+                catAnimator.SetBool("isWalking", true);
             }
         }
     }
@@ -420,44 +444,6 @@ public class CatBehavior : MonoBehaviour
         finishedLooking = false;
         yield return wait;
         state = ActionState.IDLE;
-    }
-
-    private IEnumerator Animate()
-    {
-        // Delay between each run of this coroutine to prevent Unity crashing.
-        WaitForSeconds wait = new WaitForSeconds(0.2f);
-        
-        while (!gameOver)
-        {
-            yield return wait;
-            
-            if (state == ActionState.IDLE || state == ActionState.LOOKING)
-            {
-                // Plays the cat's Idle animation.
-                bool isRunning = catAnimator.GetBool("isRunning");
-                bool isWalking = catAnimator.GetBool("isWalking");
-                catAnimator.SetBool("isRunning", false);
-                catAnimator.SetBool("isWalking", false);
-            }
-            else if (state == ActionState.HUNTING)
-            {
-                // Plays the cat's Running animation.
-                bool isRunning = catAnimator.GetBool("isRunning");
-                bool isWalking = catAnimator.GetBool("isWalking");
-                catAnimator.SetBool("isRunning", true);
-                catAnimator.SetBool("isWalking", false);
-            }
-            else if (state == ActionState.PATROLLING || state == ActionState.RESTING)
-            {
-                // Plays the cat's Walking animation.
-                bool isRunning = catAnimator.GetBool("isRunning");
-                bool isWalking = catAnimator.GetBool("isWalking");
-                catAnimator.SetBool("isRunning", false);
-                catAnimator.SetBool("isWalking", true);
-            }
-        }
-
-        yield return null;
     }
 
     public void endgameHunt()
