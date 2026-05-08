@@ -48,9 +48,6 @@ public class CatBehavior : MonoBehaviour
     // Variables needed for navigation.
     public GameObject bed;
     public GameObject[] patrolPoints;
-    private bool finishedPatrol = false;
-    private bool finishedRest = false;
-    private bool finishedLooking = false;
     public float patrolDelay = 5f;
     public float lookDelay = 5f;
     public float restDelay = 5f;
@@ -75,6 +72,14 @@ public class CatBehavior : MonoBehaviour
     
     // Bool to let the tree & certain coroutines to know when to stop running.
     [System.NonSerialized] public bool gameOver = false;
+
+    // Variables for tracking active coroutines.
+    private Coroutine audioCoroutine;
+    private Coroutine huntLookCoroutine;
+    private Coroutine huntingCoroutine;
+    private Coroutine patrollingCoroutine;
+    private Coroutine restingCoroutine;
+    private Coroutine lookAroundCoroutine;
 
     void Start()
     {
@@ -102,14 +107,14 @@ public class CatBehavior : MonoBehaviour
         tree.AddChild(huntPatrolRest);
         
         // Starts the coroutines for constant player detection, detectionSound audio, and animation.
-        StartCoroutine(Hunting());
-        StartCoroutine(DetectionSound());
+        huntingCoroutine = StartCoroutine(Hunting());
+        audioCoroutine = StartCoroutine(DetectionSound());
     }
 
     void Update()
     {
         // Calls Process() to start processing/running the nodes within the tree.
-        if (!gameOver)
+        while (!gameOver)
         {
             treeStatus = tree.Process();
             if (playerSpotted)
@@ -142,6 +147,12 @@ public class CatBehavior : MonoBehaviour
                 catAnimator.SetBool("isWalking", true);
             }
         }
+
+        // If the game ends, the constantly running coroutines will also stop.
+        StopCoroutine(huntingCoroutine);
+        huntingCoroutine = null;
+        StopCoroutine(audioCoroutine);
+        audioCoroutine = null;
     }
 
     private String GetLastAction()
@@ -222,9 +233,16 @@ public class CatBehavior : MonoBehaviour
     {
         if (!playerSpotted)
         {
-            if (lastAction == LastAction.HUNT)
+            /* If the coroutine is running, the node will still be set to "Running".
+            If the cat's state switches to IDLE, this means the coroutine finished and the node failed. 
+            If the cat's state is still hunting, this means the coroutine must start. 
+            If none of these conditions are met, the node fails. */
+            if (huntLookCoroutine != null) return Node.Status.RUNNING;
+            else if (state == ActionState.IDLE) return Node.Status.FAILURE;
+            else if (state == ActionState.HUNTING) 
             {
-                StartCoroutine(LookAfterHunting());
+                huntLookCoroutine = StartCoroutine(LookAfterHunting());
+                return Node.Status.RUNNING;
             }
             
             return Node.Status.FAILURE;
@@ -233,15 +251,34 @@ public class CatBehavior : MonoBehaviour
         // Since the player has been spotted, the cat's state must be HUNTING and their last action must be hunting.
         state = ActionState.HUNTING;
         lastAction = LastAction.HUNT;
+
+        // If any other coroutines are currently running, they will immediately stop.
+        if (lookAroundCoroutine != null) 
+        {
+            StopCoroutine(lookAroundCoroutine);
+            lookAroundCoroutine = null;
+        }
+        if (huntLookCoroutine != null) 
+        {
+            StopCoroutine(huntLookCoroutine);
+            huntLookCoroutine = null;
+        }
+        if (patrollingCoroutine != null)
+        {
+            StopCoroutine(patrollingCoroutine);
+            patrollingCoroutine = null;
+        }
+        if (restingCoroutine != null)
+        {
+            StopCoroutine(restingCoroutine);
+            restingCoroutine = null;
+        }
         
         // Moves the cat towards the player.
         agent.SetDestination(player.transform.position); 
         
-        // If the player is close enough to the cat, they have been caught.
-        if (gameOver)
-        {
-            return Node.Status.SUCCESS;
-        }
+        // If the player is close enough to the cat, they have been caught and the node is successful.
+        if (gameOver) return Node.Status.SUCCESS;
         
         return Node.Status.RUNNING;
     }
@@ -249,7 +286,7 @@ public class CatBehavior : MonoBehaviour
     private IEnumerator Patrolling()
     {
         // The delay until the cat moves to the next patrol point.
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(patrolDelay);
+        WaitForSeconds wait = new WaitForSeconds(patrolDelay);
         
         // Begins iterating through the patrolPoints array.
         foreach (GameObject waypoint in patrolPoints)
@@ -264,19 +301,28 @@ public class CatBehavior : MonoBehaviour
             yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, waypoint.transform.position) 
                                              <= agent.stoppingDistance);
             
-            StartCoroutine(LookAround());
-            yield return new WaitUntil(() => finishedLooking);
-            finishedLooking = false;
+            lookAroundCoroutine = StartCoroutine(LookAround());
+            yield return new WaitUntil(() => lookAroundCoroutine == null);
             yield return wait;
         }
-
-        // After the cat iterates through all of its patrol points, finishedPatrol is marked true.
-        state = ActionState.PATROLLING;
-        finishedPatrol = true;
         
-        // Plays an audio cue to let the player know the cat has finished its patrol.
-        catAudioSource.clip = actionCue;
-        catAudioSource.PlayOneShot(actionCue);
+        // If at any point during the patrol the player was spotted, this will not execute.
+        if (!playerSpotted)
+        {
+            /* After the cat iterates through all of its patrol points, it will still be marked as actively patrolling 
+            so that the Patrol() node functions as intended. */
+            state = ActionState.PATROLLING;
+            
+            // Plays an audio cue to let the player know the cat has finished its patrol.
+            catAudioSource.clip = actionCue;
+            catAudioSource.PlayOneShot(actionCue);
+
+            patrollingCoroutine = null;
+        }
+        else
+        {
+            if (patrollingCoroutine != null) patrollingCoroutine = null;
+        }
     }
 
     private IEnumerator LookAround()
@@ -287,32 +333,25 @@ public class CatBehavior : MonoBehaviour
         for (int i = 0; i < rotateAmount; i++)
         {
             transform.Rotate(0, rotateSpeed, 0);
-            yield return 0;
+            yield return 0 * Time.deltaTime;
         }
 
-        yield return new WaitForSecondsRealtime(lookDelay);
+        yield return new WaitForSeconds(lookDelay);
 
         // Rotates the cat to the left.
         for (int i = 0; i < rotateAmount; i++)
         {
             transform.Rotate(0, rotateSpeed * -1, 0);
-            yield return 0;
+            yield return 0 * Time.deltaTime;
         }
         
-        finishedLooking = true;
+        lookAroundCoroutine = null;
     }
     
     private Node.Status Patrol()
     {
-        // If the last action the cat performed was patrolling or eating, fail to execute node.
-        String lastActionString = GetLastAction();
-        if (lastActionString.Equals("PATROL") || lastActionString.Equals("EAT"))
-        {
-            return Node.Status.FAILURE;
-        }
-        
-        // If the player was recently spotted, fail to execute node.
-        if (playerSpotted)
+        // If the last action the cat performed was patrolling or the player was recently spotted, fail to execute node.
+        if (lastAction == LastAction.PATROL || playerSpotted)
         {
             return Node.Status.FAILURE;
         }
@@ -321,15 +360,13 @@ public class CatBehavior : MonoBehaviour
         if (state == ActionState.IDLE)
         {
             state = ActionState.PATROLLING;
-            StartCoroutine(Patrolling());
+            patrollingCoroutine = StartCoroutine(Patrolling());
         }
 
-        // When the Patrolling() coroutine sets finishedPatrol to true, this runs.
-        if (finishedPatrol)
+        // When the Patrolling() coroutine finishes, this runs.
+        if (patrollingCoroutine = null)
         {
-            StopCoroutine(Patrolling());
             lastAction = LastAction.PATROL;
-            finishedPatrol = false;
             state = ActionState.IDLE;
             return Node.Status.SUCCESS;
         }
@@ -341,7 +378,7 @@ public class CatBehavior : MonoBehaviour
     private IEnumerator Resting()
     {
         // The delay until the cat moves away from the bed.
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(restDelay);
+        WaitForSeconds wait = new WaitForSeconds(restDelay);
         
         // Sets the cat's destination to its bed.
         agent.SetDestination(bed.transform.position);
@@ -355,30 +392,22 @@ public class CatBehavior : MonoBehaviour
         for (int i = 0; i < 180; i++)
         {
             transform.Rotate(0, (rotateSpeed * 2) * -1, 0);
-            yield return 0;
+            yield return 0 * Time.deltaTime;
         }
         
         yield return wait;
 
-        // After the cat finishes resting, this lets Rest() know that Resting() was successful.
-        finishedRest = true;
-        
         // Plays an audio cue to let the player know the cat has finished its rest.
         catAudioSource.clip = actionCue;
         catAudioSource.PlayOneShot(actionCue);
+
+        restingCoroutine = null;
     }
     
     private Node.Status Rest()
     {
-        // If the last action the cat performed was resting or hunting, fail to execute node.
-        String lastActionString = GetLastAction();
-        if (lastActionString.Equals("REST") || lastActionString.Equals("HUNT"))
-        {
-            return Node.Status.FAILURE;
-        }
-        
-        // If the player was recently spotted, fail to execute node.
-        if (playerSpotted)
+        // If the last action the cat performed was resting or hunting or the player was recently spotted, fail to execute node.
+        if (lastAction == LastAction.REST || lastAction == LastAction.HUNT || playerSpotted)
         {
             return Node.Status.FAILURE;
         }
@@ -386,17 +415,14 @@ public class CatBehavior : MonoBehaviour
         // This will execute the first run-through of this node if it gets this far. 
         if (state == ActionState.IDLE)
         {
-            // state = ActionState.WORKING;
             state = ActionState.RESTING;
-            StartCoroutine(Resting());
+            restingCoroutine = StartCoroutine(Resting());
         }
         
-        // When the Resting() coroutine sets finishedRest to true, this runs.
-        if (finishedRest)
+        // When the Resting() coroutine ends, this runs.
+        if (restingCoroutine = null)
         {
-            StopCoroutine(Resting());
             lastAction = LastAction.REST;
-            finishedRest = false;
             state = ActionState.IDLE;
             return Node.Status.SUCCESS;
         }
@@ -431,18 +457,25 @@ public class CatBehavior : MonoBehaviour
     private IEnumerator LookAfterHunting()
     {
         // The delay until the cat moves on from hunting.
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(huntCooldown);
+        WaitForSeconds wait = new WaitForSeconds(huntCooldown);
 
         // Ensures cat will only start looking around after arriving at its destination.
         yield return new WaitUntil(() => Vector3.Distance(agent.transform.position, agent.destination) 
                                          <= agent.stoppingDistance);
-        StartCoroutine(LookAround());
-        yield return new WaitUntil(() => finishedLooking);
+        lookAroundCoroutine = StartCoroutine(LookAround());
+        yield return new WaitUntil(() => lookAroundCoroutine = null);
         
-        // Once the cat finishes looking around, finishedLooking is once again false and the cat can be idle.
-        finishedLooking = false;
-        yield return wait;
-        state = ActionState.IDLE;
+        // Once the cat finishes looking around and the player was not spotted, the cat will be idle.
+        if (!playerSpotted)
+        {
+            yield return wait;
+            state = ActionState.IDLE;
+            huntLookCoroutine = null;
+        }
+        else
+        {
+            if (huntLookCoroutine != null) huntLookCoroutine = null;
+        }
     }
 
     public void endgameHunt()
@@ -450,10 +483,27 @@ public class CatBehavior : MonoBehaviour
         // If the player crosses the collider in the room 2 doorway, this will trigger.
         isEndgame = true;
         
-        // All running coroutines for possible current behaviors will stop.
-        StopCoroutine(LookAround());
-        StopCoroutine(Resting());
-        StopCoroutine(Patrolling());
+        // All possibly running coroutines for current behaviors will stop.
+        if (lookAroundCoroutine != null) 
+        {
+            StopCoroutine(lookAroundCoroutine);
+            lookAroundCoroutine = null;
+        }
+        if (huntLookCoroutine != null)
+        {
+            StopCoroutine(huntLookCoroutine);
+            huntLookCoroutine = null;
+        }
+        if (patrollingCoroutine != null)
+        {
+            StopCoroutine(patrollingCoroutine);
+            patrollingCoroutine = null;
+        }
+        if (restingCoroutine != null)
+        {
+            StopCoroutine(restingCoroutine);
+            restingCoroutine = null;
+        }
         
         // The cat will prioritize hunting down the player and will not stop chasing them.
         state = ActionState.HUNTING;
